@@ -6,33 +6,48 @@ output:
   pdf_document:
     number_sections: true
     toc: true
-    
+    latex_engine: xelatex
+
 ---
-# Contexte général
 
 Les données analysées dans ce projet concernent différents indicateurs socio-économiques et environnementaux pour un ensemble de pays européens. Ces indicateurs offrent une vision globale de divers aspects comme la démographie, l'économie, l'énergie, l'emploi et l'environnement. Les analyses visent à explorer les structures sous-jacentes et les relations entre ces variables, ainsi qu'à regrouper les pays selon des caractéristiques communes.
 
 
 *Description des variables*
 
-Les données contiennent 16 variables descriptives, reflétant des dimensions clés : 
+   Les données contiennent 16 variables descriptives de 30 pays européens , reflétant des dimensions clés : 
 
-    Population au 1er janvier : Nombre absolu d'habitants.
-    Population jeune (15-29 ans) : Pourcentage de jeunes dans la population totale.
-    Premières demandes d'asile : Nombre absolu de demandes.
-    Écart de rémunération entre les sexes : Pourcentage de différence de salaire horaire brut moyen entre hommes et femmes.
-    Salaire minimum : Montant en euros par mois.
-    Décrocheurs scolaires précoces : Pourcentage de la population âgée de 18 à 24 ans quittant prématurément le système scolaire.
-    Taux d'inflation : Variation en pourcentage par rapport à l'année précédente.
-    Taux de chômage : Pourcentage de la population active âgée de 15 à 74 ans.
-    Taux de chômage des jeunes : Pourcentage de la population active de moins de 25 ans.
-    PIB par habitant : Produit intérieur brut en euros par habitant.
-    Dette brute du gouvernement : Pourcentage de la dette brute par rapport au PIB.
-    Émissions de gaz à effet de serre : Quantité moyenne en tonnes par habitant.
-    Énergies renouvelables : Pourcentage dans la consommation finale brute d'énergie.
-    Prix de l'électricité : Montant en euros par MWh, incluant les taxes.
-    Dépendance aux importations d'énergie : Pourcentage de dépendance à l'énergie importée.
-    Taux de risque de pauvreté ou d'exclusion sociale : Pourcentage de la population à risque de pauvreté ou d'exclusion sociale.
+   Population au 1er janvier : Nombre absolu d'habitants.
+   
+   Population jeune (15-29 ans) : Pourcentage de jeunes dans la population totale.
+  
+   Premières demandes d'asile : Nombre absolu de demandes.
+   
+  Écart de rémunération entre les sexes : Pourcentage de différence de salaire horaire brut moyen entre hommes et femmes.
+    
+   Salaire minimum : Montant en euros par mois.
+    
+   Décrocheurs scolaires précoces : Pourcentage de la population âgée de 18 à 24 ans quittant prématurément le système scolaire.
+    
+  Taux d'inflation : Variation en pourcentage par rapport à l'année précédente.
+    
+  Taux de chômage : Pourcentage de la population active âgée de 15 à 74 ans.
+    
+  Taux de chômage des jeunes : Pourcentage de la population active de moins de 25 ans.
+    
+   PIB par habitant : Produit intérieur brut en euros par habitant.
+    
+   Dette brute du gouvernement : Pourcentage de la dette brute par rapport au PIB.
+    
+  Émissions de gaz à effet de serre : Quantité moyenne en tonnes par habitant.
+    
+  Énergies renouvelables : Pourcentage dans la consommation finale brute d'énergie.
+    
+  Prix de l'électricité : Montant en euros par MWh, incluant les taxes.
+    
+  Dépendance aux importations d'énergie : Pourcentage de dépendance à l'énergie importée.
+    
+  Taux de risque de pauvreté ou d'exclusion sociale : Pourcentage de la population à risque de pauvreté ou d'exclusion sociale.
 
 L’objectif de cette analyse est d’explorer et de réduire la dimensionnalité des données grâce à une analyse en composantes principales (ACP), puis de grouper les pays selon leurs caractéristiques à l’aide de méthodes de classification. L’ACP permet de visualiser les similitudes entre pays et d’identifier les variables les plus importantes. Les méthodes de classification, notamment la classification ascendante hiérarchique (CAH) et l’algorithme des centres mobiles (k-means), permettent d’interpréter les regroupements obtenus. Les résultats des classifications seront comparés afin de comprendre les proximités entre pays et leur cohérence.
 
@@ -54,6 +69,13 @@ library(ggplot2)
 if (!tinytex::is_tinytex()) {
   tinytex::install_tinytex()
 }
+knitr::opts_chunk$set(comment = NA)
+```
+
+
+```{r}
+knitr::opts_chunk$set(comment = NA)
+
 ```
 
 
@@ -64,21 +86,24 @@ euro_data <- read.csv("data/euro.csv", header = TRUE, sep = ";")
 euro_data_normalized <- as.data.frame(lapply(euro_data[, -1], function(x) {
   (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 }))
+
 ```
+
+
+
+
 
 *Diagrammes à mmoustache*
 
-La distribution de la variable Population montre une grande variabilité entre les pays européens. Certains pays, comme l'Allemagne (84,3 millions), la France (68,1 millions) et l'Italie (58,9 millions), présentent des populations nettement supérieures à la majorité. Ces valeurs extrêmes contrastent avec des pays de petite taille comme Malte (0,54 million) et Chypre (0,92 million). La médiane, relativement basse, indique que la plupart des pays européens ont des populations bien inférieures à ces valeurs élevées.
 
-Quant à la variable Youth Population (pourcentage de jeunes âgés de 15 à 29 ans), elle présente une répartition beaucoup plus homogène. Les pourcentages varient de 13,2 % (Bulgarie) à 21,0 % (Islande), sans aucune valeur aberrante. La médiane est bien centrée, reflétant une répartition équilibrée entre les pays. On observe que les pays nordiques, comme l’Islande (21,0 %) et la Norvège (18,7 %), possèdent des proportions relativement élevées de jeunes, tandis que des pays comme la Bulgarie se situent à l'extrémité inférieure de cette répartition.
 
 
 ```{r}
 # Supprimer la première colonne si elle contient des noms (optionnel)
 euro_data <- euro_data[, -1]
 
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[1:2]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
+
+selected_columns <- colnames(euro_data)[1:2]  
 
 # Ajuster les marges et l'espacement
 par(mfrow = c(1, 2),  # Deux graphiques côte à côte
@@ -97,14 +122,40 @@ for (col_name in selected_columns) {
           cex.axis = 0.9)  # Taille des axes
 }
 
-# Réinitialiser les paramètres
-par(mfrow = c(1, 1))  
+
 
 
 
 
 ```
+La distribution de la variable Population montre une grande variabilité entre les pays européens. Certains pays, comme l'Allemagne (84,3 millions), la France (68,1 millions) et l'Italie (58,9 millions), présentent des populations nettement supérieures à la majorité. Ces valeurs extrêmes contrastent avec des pays de petite taille comme Malte (0,54 million) et Chypre (0,92 million). La médiane, relativement basse, indique que la plupart des pays européens ont des populations bien inférieures à ces valeurs élevées.
 
+Quant à la variable Youth Population (pourcentage de jeunes âgés de 15 à 29 ans), elle présente une répartition beaucoup plus homogène. Les pourcentages varient de 13,2 % (Bulgarie) à 21,0 % (Islande), sans aucune valeur aberrante. La médiane est bien centrée, reflétant une répartition équilibrée entre les pays. On observe que les pays nordiques, comme l’Islande (21,0 %) et la Norvège (18,7 %), possèdent des proportions relativement élevées de jeunes, tandis que des pays comme la Bulgarie se situent à l'extrémité inférieure de cette répartition.
+
+
+```{r}
+
+selected_columns <- colnames(euro_data)[3:4]  
+
+
+par(mfrow = c(1, 2),  
+    oma = c(2, 2, 2, 2),  
+    mar = c(5, 5, 4, 2))  
+
+
+for (col_name in selected_columns) {
+  boxplot(euro_data[[col_name]],
+          main = paste("Boîte à moustaches\n", col_name),  
+          ylab = col_name,
+          col = "lightblue",
+          border = "darkblue",
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)  
+}
+
+
+```
 La distribution de la variable First Time Asylum Applicants (premières demandes d'asile) montre une forte asymétrie, avec plusieurs valeurs extrêmes très élevées. Ces valeurs, représentées par des points au-dessus des moustaches, indiquent que quelques pays reçoivent un nombre disproportionné de premières demandes d'asile par rapport à la majorité. La médiane est très basse, ce qui reflète que la plupart des pays ont un nombre relativement faible de demandes.
 
 La variable Gender Pay Gap (écart de rémunération entre les sexes) présente une distribution symétrique et homogène. La médiane est bien centrée, et la boîte à moustaches indique que les valeurs sont concentrées dans une plage relativement étroite. Aucun outlier n’est visible, ce qui suggère que les écarts salariaux entre les sexes sont globalement similaires parmi les pays analysés.
@@ -115,28 +166,24 @@ Les données brutes confirment les observations issues des diagrammes à moustac
 Pour la variable Gender Pay Gap, les données confirment l'homogénéité observée. Toutefois, on peut noter des différences significatives entre certains pays. Par exemple, l'Autriche (18,4) et la Suisse (17,9) affichent des valeurs élevées, tandis que le Luxembourg présente une valeur négative (-0,7), indiquant une situation inverse inhabituelle.
 
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[3:4]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
+selected_columns <- colnames(euro_data)[5:6]  
 
-# Boucle pour tracer les boîtes à moustaches
+par(mfrow = c(1, 2),  
+    oma = c(2, 2, 2, 2),  
+    mar = c(5, 5, 4, 2))  
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name), 
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)  
 }
-
-# Réinitialiser les paramètres
-par(mfrow = c(1, 1))  
 
 
 ```
@@ -146,29 +193,24 @@ La distribution de la variable Minimum Wage (salaire minimum) montre une dispers
 La variable People at Risk of Poverty or Exclusion (personnes à risque de pauvreté ou d'exclusion sociale) présente une distribution assez homogène. La médiane est centrée, ce qui indique une répartition symétrique des données entre les différents pays. La boîte montre que la majorité des pays ont des valeurs proches les unes des autres, reflétant une cohérence entre les nations sur cet indicateur.
 
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[5:6]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
+selected_columns <- colnames(euro_data)[7:8]  
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
 
-# Boucle pour tracer les boîtes à moustaches
+par(mfrow = c(1, 2), 
+    oma = c(2, 2, 2, 2),  
+    mar = c(5, 5, 4, 2))  
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name), 
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1, 
+          cex.axis = 0.9)  
 }
-
-# Réinitialiser les paramètres
-par(mfrow = c(1, 1))  
-
 
 ```
 La distribution de la variable Early School Leavers (décrocheurs scolaires précoces) montre une répartition assez homogène, sans valeurs aberrantes significatives. La médiane est centrée dans la boîte, indiquant une répartition équilibrée entre les pays. La plupart des pays ont des taux de décrochage scolaire compris entre les moustaches, avec peu de variabilité.
@@ -177,28 +219,25 @@ La distribution de la variable Early School Leavers (décrocheurs scolaires pré
 La variable Inflation Rate (taux d’inflation) présente une valeur aberrante, visible sous forme de point au-dessus des moustaches. Cela indique qu'un ou quelques pays ont un taux d’inflation nettement supérieur à la majorité. La boîte est asymétrique, suggérant une distribution légèrement biaisée vers les valeurs inférieures.
 
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[7:8]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
+selected_columns <- colnames(euro_data)[9:10]  
 
-# Boucle pour tracer les boîtes à moustaches
+
+par(mfrow = c(1, 2), 
+    oma = c(2, 2, 2, 2),  
+    mar = c(5, 5, 4, 2))  
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name),
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)  
 }
-
-# Réinitialiser les paramètres
-#par(mfrow = c(2, 1))  
 
 
 ```
@@ -206,24 +245,24 @@ La variable Unemployment Rate (taux de chômage) montre une distribution globale
 
 Pour la variable Youth Unemployment Rate (taux de chômage des jeunes), la distribution est plus dispersée, sans valeurs aberrantes. La boîte et les moustaches reflètent une variabilité importante entre les pays, traduisant des disparités régionales marquées. La médiane, située un peu en dessous du centre, indique une distribution légèrement asymétrique.
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[9:10]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
+selected_columns <- colnames(euro_data)[11:12]  
 
-# Boucle pour tracer les boîtes à moustaches
+
+par(mfrow = c(1, 2),  
+    oma = c(2, 2, 2, 2),
+    mar = c(5, 5, 4, 2))  
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name),  
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)
 }
 
 
@@ -233,150 +272,124 @@ La variable GDP per Capita (PIB par habitant) présente une distribution avec un
 
 La variable Government Gross Debt (dette brute du gouvernement en pourcentage du PIB) montre deux valeurs aberrantes au-dessus des moustaches, indiquant que certains pays ont des niveaux de dette exceptionnellement élevés. La boîte indique une distribution concentrée pour la majorité des pays avec une médiane légèrement en dessous du centre, suggérant une légère asymétrie vers les valeurs plus faibles.
 
+
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[11:12]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
+selected_columns <- colnames(euro_data)[13:14]  
 
-# Boucle pour tracer les boîtes à moustaches
+
+par(mfrow = c(1, 2), 
+    oma = c(2, 2, 2, 2), 
+    mar = c(5, 5, 4, 2))
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name), 
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)  
 }
 
-# Réinitialiser les paramètres
-par(mfrow = c(1, 1))  
 
 ```
 La variable Greenhouse Gas Emissions (émissions de gaz à effet de serre en tonnes par habitant) présente deux valeurs aberrantes correspondant à des pays avec des émissions particulièrement élevées. La médiane est légèrement inférieure au centre de la boîte, indiquant une légère asymétrie vers les valeurs plus faibles. Cela suggère que la majorité des pays ont des émissions modérées, tandis qu'un petit nombre a des émissions bien au-dessus de la moyenne.
 
 
 La variable Renewable Energy (part des énergies renouvelables dans la consommation énergétique) montre également deux valeurs aberrantes pour des pays ayant une part particulièrement élevée d'énergies renouvelables. La distribution est asymétrique, avec une majorité des pays ayant des parts plus faibles en énergies renouvelables. La médiane est proche du bas de la boîte, indiquant une concentration de valeurs relativement faibles pour la plupart des 
-
 ```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[13:14]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
+selected_columns <- colnames(euro_data)[15:16]  
 
-# Boucle pour tracer les boîtes à moustaches
+
+par(mfrow = c(1, 2),  
+    oma = c(2, 2, 2, 2),  
+    mar = c(5, 5, 4, 2))  
+
+
 for (col_name in selected_columns) {
   boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
+          main = paste("Boîte à moustaches\n", col_name),  
           ylab = col_name,
           col = "lightblue",
           border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
+          cex.main = 1.2,  
+          cex.lab = 1.1,  
+          cex.axis = 0.9)  
 }
 
-# Réinitialiser les paramètres
-par(mfrow = c(1, 1))  
 
 ```
+
 La variable Electricity Prices (prix de l'électricité en euros par MWh, taxes incluses) montre une distribution relativement homogène, sans valeurs aberrantes visibles. La boîte à moustaches illustre une concentration modérée autour de la médiane, indiquant que les prix sont globalement similaires entre les pays européens. Cependant, la largeur de la boîte et des moustaches traduit une certaine variabilité, reflétant des écarts notables pour certains pays. Par exemple, des pays comme l'Allemagne et le Danemark ont historiquement des prix de l'électricité plus élevés.
 
 La variable Energy Imports Dependency (dépendance aux importations d'énergie, exprimée en pourcentage) présente une dispersion importante entre les pays. La médiane, située dans le haut de la boîte, indique que la majorité des pays ont une dépendance modérée à élevée. La variabilité marquée, visible à travers les moustaches longues, reflète des écarts significatifs : certains pays, comme Malte (99,0 %) et Chypre (92,0 %), affichent une forte dépendance énergétique, tandis que d'autres, comme l'Islande (15,2 %) et la Norvège (15,2 %), montrent une indépendance énergétique notable. Cette disparité est probablement liée à la disponibilité des ressources énergétiques, à leur gestion efficace et à l'intégration des énergies renouvelables.
 
-```{r}
-# Sélectionner les colonnes pour les diagrammes (par groupe de 2)
-selected_columns <- colnames(euro_data)[15:16]  # Modifier pour sélectionner un autre groupe de colonnes (par ex. 5:6)
 
-# Ajuster les marges et l'espacement
-par(mfrow = c(1, 2),  # Deux graphiques côte à côte
-    oma = c(2, 2, 2, 2),  # Marges extérieures : bas, gauche, haut, droite
-    mar = c(5, 5, 4, 2))  # Marges intérieures : bas, gauche, haut, droite
 
-# Boucle pour tracer les boîtes à moustaches
-for (col_name in selected_columns) {
-  boxplot(euro_data[[col_name]],
-          main = paste("Boîte à moustaches\n", col_name),  # Titre sur deux lignes
-          ylab = col_name,
-          col = "lightblue",
-          border = "darkblue",
-          cex.main = 1.2,  # Taille du titre
-          cex.lab = 1.1,  # Taille des étiquettes
-          cex.axis = 0.9)  # Taille des axes
-}
 
-# Réinitialiser les paramètres
+++++++++++
 
-```
+
+
+
 Pour appoter plus de visibilité  nous allons remplacer les colones pour des colones numérique en se servant de cette légense 
 Légende des colonnes (à remplir manuellement si besoin) :
-[1]: Population
- [2]: Youth.population
- [3]: First.time.asylum.applicants
- [4]: Gender.pay.gap
- [5]: Minimum.wage
- [6]: People.at.risk.of.poverty.or.exclusion
- [7]: Early.school.leavers
- [8]: Inflation.rate
- [9]: Unemployment.rate
- [10]: Youth.unemployment.rate
- [11]: GDP.per.capita
- [12]: Government.gross.debt
- [13]: Greenhouse.gas.emissions
- [14]: Renewable.energy
- [15]: Electricity.prices
- [16]: Energy.imports.dependency
- 
-La matrice de variance-covariance VV calcule la dispersion des variables ainsi que les relations linéaires entre elles. Les valeurs sur la diagonale principale représentent la variance de chaque variable. Par exemple, la variance de Population est très élevée (4.653257e+144.653257e+14), reflétant une grande dispersion entre les pays, comme cela a été observé dans les diagrammes à moustaches. En revanche, la variance de Gender Pay Gap est beaucoup plus faible (25.6190), confirmant l’homogénéité relative notée précédemment, bien qu'elle reste significative.
+
+Légende des colonnes :  
+[1]: Population  
+[2]: Youth.population  
+[3]: First.time.asylum.applicants  
+[4]: Gender.pay.gap  
+[5]: Minimum.wage  
+[6]: People.at.risk.of.poverty.or.exclusion  
+[7]: Early.school.leavers  
+[8]: Inflation.rate  
+[9]: Unemployment.rate  
+[10]: Youth.unemployment.rate  
+[11]: GDP.per.capita  
+[12]: Government.gross.debt  
+[13]: Greenhouse.gas.emissions  
+[14]: Renewable.energy  
+[15]: Electricity.prices  
+[16]: Energy.imports.dependency
+
+La matrice de variance-covariance VV calcule la dispersion des variables ainsi que les relations linéaires entre elles. Les valeurs sur la diagonale principale représentent la variance de chaque variable. Par exemple, la variance de Population est très élevée (4.653257e+14), reflétant une grande dispersion entre les pays, comme cela a été observé dans les diagrammes à moustaches. En revanche, la variance de Gender Pay Gap est beaucoup plus faible (25.6190), confirmant l’homogénéité relative notée précédemment, bien qu'elle reste significative.
 
 Une covariance négative entre Renewable Energy et Energy Imports Dependency (−290.3213) reflète une relation inverse plus marquée : les pays avec une part plus élevée d’énergies renouvelables, comme l’Islande et la Norvège, sont généralement moins dépendants des importations d’énergie.
 
-La matrice VV enrichit l’analyse exploratoire initiale en fournissant une quantification précise des dispersions et interactions entre variables. Ces résultats constituent une base solide pour des analyses plus avancées, comme l'analyse en composantes principales (ACP), tout en préparant la transition vers l'étude des relations normalisées via la matrice de corrélation.
+La matrice V enrichit l’analyse exploratoire initiale en fournissant une quantification précise des dispersions et interactions entre variables. Ces résultats constituent une base solide pour des analyses plus avancées, comme l'analyse en composantes principales (ACP), tout en préparant la transition vers l'étude des relations normalisées via la matrice de corrélation.
 
 
 ```{r}
 
-#3. Calculez la matrice de variance-covariance V des données, sans utiliser la fonction cov. Que peut-on dire de ces
-# valeurs, en confrontation avec les deux questions précédentes ?
-#
-
-# Centrer les données : soustraire la moyenne de chaque colonne
-# 
+#3
 euro_data_centered <- scale(euro_data, center = TRUE, scale = FALSE)
 
-# Calculer la matrice de variance-covariance
-n <- nrow(euro_data)  # Nombre d'observations
+
+n <- nrow(euro_data)  
 V <- (t(euro_data_centered) %*% euro_data_centered) / (n - 1)
 
-# Ajouter des crochets pour les noms des colonnes
-colnames(V) <- paste0("[", seq_len(ncol(V)), "]")
-rownames(V) <- colnames(euro_data)  # Garder les noms complets pour les lignes
 
-# Arrondir les valeurs à 4 décimales
+colnames(V) <- paste0("[", seq_len(ncol(V)), "]")
+rownames(V) <- colnames(euro_data)  
+
+
 V <- round(V, 4)
 
-# Afficher la matrice en deux groupes pour une présentation alignée
+
 print("Matrice de variance-covariance (indices entre crochets pour les colonnes) :")
 
-# Première moitié (colonnes 1 à 8)
-cat("\nPartie 1 : Colonnes [1] à [8]\n")
-print(V[, 1:8])
 
-# Deuxième moitié (colonnes 9 à 16)
-cat("\nPartie 2 : Colonnes [9] à [16]\n")
-print(V[, 9:16])
+cat("\nPartie 1 : Colonnes [1] à [9]\n")
+print(V[, 1:9])
 
-# Ajouter une suggestion de légende pour correspondance
-cat("\nLégende des colonnes  :\n")
-cat(paste0("[", seq_len(ncol(euro_data)), "]: ", colnames(euro_data), "\n"))
+
+cat("\nPartie 2 : Colonnes [10] à [16]\n")
+print(V[, 10:16])
 
 
 ```
@@ -384,23 +397,27 @@ La heatmap de la matrice de variance-covariance illustre les relations entre les
 
 Par exemple, des relations marquées apparaissent entre Population et Youth Population, ainsi qu'entre Renewable Energy et Energy Imports Dependency, confirmant les observations sur la dépendance énergétique. Cette visualisation synthétique facilite l’identification des interactions clés et des lacunes dans les données.
 
-```{r}
-#  Question 3 suite 
-# Question 3 suite avec noms de variables lisibles
-V_rounded <- round(V, 2)
 
-# Étape 3 : Créer la heatmap avec des noms de variables lisibles
+
+
+```{r}
+#3
+V_rounded <- round(V, 2)
 heatmap(as.matrix(V_rounded), 
-        main = "Heatmap  variance-covariance",
+        main = "Heatmap de la matrice de variance-covariance",
         Colv = NA, Rowv = NA,  # Désactive le clustering
         scale = "none",  # Pas de normalisation supplémentaire
         col = heat.colors(10),  # Palette de couleurs
-        margins = c(15, 15),  # Augmenter les marges pour les étiquettes
-        cexRow = 0.8, cexCol = 0.8)  # Réduire la taille des étiquettes pour plus de lisibilité
+        margins = c(15, 15),  # Ajuster les marges
+        labCol = colnames(euro_data),  # Noms originaux des colonnes
+        labRow = rownames(V_rounded),  # Noms des lignes
+        cexCol = 0.8,  # Taille des labels des colonnes
+        cexRow = 0.8)  # Taille des labels des lignes
+
 
 ```
 
-La matrice de corrélation offre une vision normalisée des relations linéaires entre les variables, avec des coefficients compris entre -1 et 1. Une corrélation positive modérée est observée entre Population et Youth Population (r=0.87r), indiquant que les pays avec une population élevée tendent à avoir une proportion importante de jeunes.
+La matrice de corrélation offre une vision normalisée des relations linéaires entre les variables, avec des coefficients compris entre -1 et 1. Une corrélation positive modérée est observée entre Population et Youth Population (r=0.87), indiquant que les pays avec une population élevée tendent à avoir une proportion importante de jeunes.
 
 Une relation négative significative est également visible entre Renewable Energy et Energy Imports Dependency (r=−0.54), confirmant que les pays intégrant davantage d’énergies renouvelables sont généralement moins dépendants des importations énergétiques.
 
@@ -410,10 +427,8 @@ De plus, une corrélation très forte (r=0.87) entre Youth Unemployment Rate et 
 
 
 ```{r}
-# Question 4 améliorée 
-# Transformer la matrice de corrélation en format long
-# Calculer la matrice de corrélation
-# Calculer la matrice de corrélation
+# 4
+
 correlation_matrix <- cor(euro_data, use = "complete.obs")
 
 # Arrondir les valeurs à deux décimales pour une meilleure lisibilité
@@ -426,11 +441,6 @@ rownames(correlation_matrix_rounded) <- colnames(correlation_matrix)
 # Afficher la matrice avec indices numériques
 print("Matrice de corrélation (indices pour les colonnes) :")
 print(correlation_matrix_rounded)
-
-# Afficher la légende des colonnes pour correspondance
-cat("\nLégende des colonnes :\n")
-cat(paste0("[", seq_len(ncol(euro_data)), "]: ", colnames(euro_data), "\n"))
-
 
 ```
 
@@ -468,15 +478,8 @@ Sans center, les composantes principales seraient biaisées par des variables au
 
 
 ```{r}
-# Question 5 
-#A l’aide de la fonction prcomp, déterminez les composantes principales. Ces composantes forment-elles une base
-# orthonormée (le prouver numériquement) ? A quoi correspondent les paramètres center et scale? Quel est leur
-#influence sur le résultat ?
+# 5 
 
-
-# Remplacer les NA par la moyenne
-# Question 5
-# Remplacer les NA par la moyenne
 euro_data_replace_na <- apply(euro_data, 2, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x))
 
 # Calculer les composantes principales
@@ -500,8 +503,6 @@ print(head(res$x, n = 6))
 
 # Ajouter le biplot au PDF
 biplot(res, scale = 0, main = "Biplot des composantes principales")
-
-# Fermer le fichier PDF
 dev.off()
 
 
@@ -511,8 +512,8 @@ dev.off()
 ```{r fig.width=10, fig.height=8}
 # Suite 5
 # Ajuster les dimensions et ajouter un titre pour plus de visibilité
-par(oma = c(0, 0, 2, 0))  # Ajuster les marges externes
-biplot(res, scale = 0, cex = 0.8)  # Réduire la taille des points pour moins d'encombrement
+par(oma = c(0, 0, 2, 0))  
+biplot(res, scale = 0, cex = 0.8)  
 title("Biplot des composantes principales", outer = TRUE)
 
 ```
@@ -525,18 +526,17 @@ Ce type de visualisation permet d'identifier rapidement les pays qui sortent du 
 
 
 ```{r}
-# Question 6 
+#6 
 # Étape 1 : Calculer les composantes principales (si non déjà fait)
 euro_data_replace_na <- apply(euro_data, 2, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x))
 res <- prcomp(euro_data_replace_na, scale = TRUE, center = TRUE)
 
-# Étape 2 : Récupérer les coordonnées dans la nouvelle base
 ```
 
 
 ```{r fig.width=10, fig.height=8}
 
-# Question 6 suite 
+#6 
 coord <- res$x
 
 # Étape 3 : Ajouter les noms des pays comme noms de lignes
@@ -559,12 +559,7 @@ En analysant la variance expliquée cumulée, les cinq premières composantes pr
 Le critère de l’éboulis (coudée visible dans la ligne bleue après la cinquième composante) renforce également cette décision. Ainsi, la sélection des cinq premières composantes est justifiée à la fois par la proportion de variance expliquée et par la méthode visuelle.
 
 ```{r}
-# Question 7 
-# Extraire les variances (valeurs propres)
-#7. Représentez l’ébouli des valeurs propres et pourcentage des variances expliquées sur un même graphique. Combien
-# de composantes retenez-vous ? Justifiez votre réponse.
-# Question 7
-# Extraire les variances (valeurs propres)
+#7 
 variances <- res$sdev^2
 
 # Calculer le pourcentage de variance expliquée
@@ -610,13 +605,12 @@ Ce graphique est utile pour identifier les regroupements de pays basés sur des 
 
 
 ```{r, fig.width=10, fig.height=8}
-# Question 8 8. A l’aide de la fonction biplot, observez les projections des individus et les variables initiales. Interprétez ce graphique.
-
+# 8
 # Créer le biplot avec des couleurs et des tailles ajustées
 biplot(res, scale = 0, 
        main = "Biplot des projections des pays et des variables",
        cex = 0.8,  # Taille des points et flèches
-       col = c("blue", "red"))  # Points des pays en bleu, flèches des variables en rouge
+       col = c("blue", "red"))
 ```
 Sur les deux plans factoriels observés, plusieurs éléments significatifs ressortent. Sur le premier plan (PC2 vs PC3), Youth.unemployment.rate et Unemployment.rate se distinguent par leur alignement, reflétant une corrélation positive et leur importance pour la différenciation des pays. Renewable.energy et Inflation.rate se projettent dans des directions opposées, mettant en évidence des dynamiques contrastées entre ces variables. Le pays marqué comme 26 se démarque nettement, tandis que d'autres restent proches du centre, traduisant une certaine homogénéité.
 
@@ -625,18 +619,17 @@ Sur le second plan (PC3 vs PC4), Energy.imports.dependency et Renewable.energy m
 Ces analyses mettent en lumière les relations complexes entre variables et pays, permettant de mieux comprendre les dynamiques sous-jacentes tout en identifiant les facteurs qui différencient certains pays.
 
 ```{r, fig.width=8, fig.height=10}
-# Question 9 Observez d’autres plans factoriels, et commentez.
+#  9 
 # Plan PC2 vs PC3
 biplot(res, choices = c(2, 3), scale = 0, 
        main = "Biplot des projections des pays et des variables (PC2 vs PC3)",
-       cex = 0.8,  # Taille des points et flèches
-       col = c("blue", "red"))  # Points des pays en bleu, flèches des variables en rouge
-
+       cex = 0.8,  
+       col = c("blue", "red"))  
 # Plan PC3 vs PC4
 biplot(res, choices = c(3, 4), scale = 0, 
        main = "Biplot des projections des pays et des variables (PC3 vs PC4)",
        cex = 0.8,  # Taille des points et flèches
-       col = c("blue", "red"))  # Points des pays en bleu, flèches des variables en rouge
+       col = c("blue", "red"))  
 ```
 Les cos² indiquent la qualité de la représentation des variables sur le premier plan factoriel (PC1-PC2). Plus le cos² est élevé, meilleure est la représentation de la variable sur ce plan. Les variables les mieux représentées incluent Minimum.wage, GDP.per.capita, et Youth.population, avec des cos² respectifs de 0.23, 0.21 et 0.16. Ces variables jouent donc un rôle clé dans la structuration de ce plan factoriel.
 
@@ -646,8 +639,7 @@ Ces résultats permettent de se concentrer sur les variables dominantes pour ana
 
 ```{r, fig.width=8, fig.height=10}
 
-# Question 10. Déterminez quelles sont les variables les mieux représentées par le premier plan factoriel
-# Extraire les charges des vecteurs propres (coefficients de res$rotation)
+#  10. 
 loadings <- res$rotation
 
 # Calculer le cos² pour le plan PC1-PC2
@@ -662,14 +654,14 @@ best_variables <- names(sort(cos2_PC1_PC2, decreasing = TRUE))
 cat("\nVariables les mieux représentées par PC1-PC2 (par ordre de qualité) :\n")
 print(best_variables)
 ```
-Les individus [1] et [27] ont des contributions relativement élevées sur certaines composantes principales, comme PC12PC12, PC9PC9, ou PC8PC8. Par exemple, pour l’individu [27], la contribution sur PC10PC10 est très marquée avec une valeur de 3.21, ce qui explique une part significative de la variance associée à cette composante.
+Les individus [1] et [27] ont des contributions relativement élevées sur certaines composantes principales, comme PC12, PC9, ou PC8. Par exemple, pour l’individu [27], la contribution sur PC10PC10 est très marquée avec une valeur de 3.21, ce qui explique une part significative de la variance associée à cette composante.
 La somme des contributions totales confirme que tous les individus participent de manière significative à la construction des composantes principales, car aucun individu ne tombe en dessous du seuil théorique de contribution (1/n​, où n est le nombre d'individus).
 
 Dans ce cas, aucun individu n’a une contribution faible, ce qui signifie qu’il n’est pas nécessaire d’éliminer des individus de l’analyse. Tous participent de manière adéquate à la variance expliquée par les composantes principales.
 
 ```{r, fig.width=10, fig.height=7}
-# Question 11 11. Calculez la contribution de chacun des individus à la construction des composantes principales. Doit-on supprimer
-# des individus de l’analyse ?
+ # 11 
+
 # Étape 1 : Extraire les scores des individus
 scores <- res$x  # Les coordonnées des individus dans le nouvel espace
 
@@ -736,9 +728,7 @@ Cette étude en analyse en composantes principales (ACP) a permis de réduire la
 
 ```{r, fig.width=10, fig.height=10}
 # Question 1  
-#  Après avoir déterminé les deux matrices de dissimilarités en utilisant respectivement une métrique Euclidienne
-# et une métrique réduite, effectuez une classification ascendante hiérarchique des données fondée pour chaque
-# matrice sur le saut minimum.
+
 # Matrice de dissimilarité Euclidienne (non normalisée)
 dissimilarity_euclidean <- as.matrix(dist(euro_data, method = "euclidean"))
 
@@ -779,10 +769,16 @@ plot(cah_single_reduced,
 
 
 ```
+Les dendrogrammes obtenus à partir des matrices de dissimilarité Euclidienne normalisée et non normalisée mettent en évidence des différences dans les regroupements des pays. Avec la matrice normalisée, les échelles des variables sont équilibrées, ce qui permet une contribution équitable de chaque caractéristique aux regroupements. 
 
+Cela se traduit par une structure de classification où les similarités relatives entre les pays sont mieux prises en compte. En revanche, la matrice non normalisée amplifie l'influence des variables à grande échelle, ce qui peut biaiser les regroupements et privilégier certaines caractéristiques au détriment d'autres. 
+
+Les fusions à des hauteurs plus élevées dans le dendrogramme non normalisé indiquent des dissimilarités globales plus marquées. Cette comparaison souligne l'importance de la normalisation pour éviter des biais et obtenir des regroupements reflétant plus fidèlement les similarités relatives entre les pays.
 
 ```{r}
 # Question 2 
+#2. Représentez le dendrogramme ainsi que la “hauteur” (attribut height) en fonction du nombre de classes. Que
+#représente la “hauteur” ici ? Ou couperiez-vous le dendrogramme ?
 # Récupérer les hauteurs des fusions
 heights_euclidean <- sort(cah_single_euclidean$height, decreasing = TRUE)
 heights_reduced <- sort(cah_single_reduced$height, decreasing = TRUE)
@@ -792,7 +788,7 @@ plot(1:length(heights_euclidean), heights_euclidean,
      type = "b", col = "blue", pch = 20,
      xlab = "Nombre de classes", 
      ylab = "Hauteur", 
-     main = "Hauteur en fonction du nombre de classes (Euclidienne, non normalisée)")
+     main = "Hauteur en fonction du nombre de classes (Euclidienne, non normalisée))")
 
 # Courbe des hauteurs pour la matrice normalisée
 plot(1:length(heights_reduced), heights_reduced, 
@@ -803,45 +799,77 @@ plot(1:length(heights_reduced), heights_reduced,
 
 
 ```
+Les deux graphiques montrent la relation entre le nombre de classes et la hauteur des fusions dans le dendrogramme pour des matrices de dissimilarité euclidiennes, normalisées et non normalisées.
+
+ Représentation des dendrogrammes et des hauteurs : Les dendrogrammes illustrent les regroupements hiérarchiques des observations en fonction des dissimilarités. La hauteur des branches représente la distance ou la dissimilarité entre les clusters fusionnés. Plus la hauteur est élevée, plus les groupes fusionnés sont dissemblables.
+
+Interprétation de la hauteur : La hauteur dans ces graphiques correspond à la dissimilarité mesurée entre les clusters au moment de leur fusion. Dans le cas de la matrice normalisée, les contributions des différentes variables sont équilibrées, tandis que pour la matrice non normalisée, certaines variables peuvent dominer les regroupements en raison de leurs échelles.
+
+Découpage du dendrogramme : Le point de découpe optimal dépend du contexte de l’analyse, mais il est souvent déterminé en identifiant une hauteur au-delà de laquelle les fusions sont moins significatives (par exemple, un "saut" important dans la hauteur des fusions). Pour le dendrogramme basé sur la matrice normalisée, un découpage à environ 3 ou 4 clusters pourrait être justifié, car les différences de hauteur sont notables à ces niveaux. Pour le dendrogramme non normalisé, un découpage similaire pourrait être envisagé, mais avec prudence, car les fusions pourraient être influencées par des variables dominantes.
 
 
-```{r}
-# Question 3 
-# Fixer le nombre de classes (par exemple 4, basé sur la question 2)
-k <- 4  # Ajuster selon la coupure choisie
-classes <- cutree(cah_single_reduced, k = k)
 
-# Ajouter les classes aux données
-euro_data_with_classes <- data.frame(euro_data_normalized, Classe = classes)
-# Fonction pour calculer le centre de gravité
-calculate_center <- function(data, classes) {
-  aggregate(. ~ Classe, data = data, FUN = mean)
-}
 
-# Centres de gravité
-centers <- calculate_center(euro_data_with_classes, classes)
-cat("Centres de gravité :\n")
-print(centers)
-```
+
+
 
 
 ```{r, fig.width=14, fig.height=10}
-# Calculer l'inertie intra-classe
-# Question 3 suite 
-calculate_inertia <- function(data, centers, classes) {
-  inertia <- 0
-  for (class in unique(classes)) {
-    class_data <- data[classes == class, ]
-    class_center <- centers[class, -ncol(centers)]  # Exclure la colonne des classes
-    inertia <- inertia + sum(rowSums((class_data - class_center)^2))
-  }
-  return(inertia)
-}
 
-# Inertie totale
-inertia <- calculate_inertia(euro_data_normalized, centers, classes)
-cat("\nInertie intra-classe totale : ", round(inertia, 2), "\n")
+# Q3
+# Nettoyage des données
+euro_data_clean <- na.omit(euro_data)  
+euro_data_clean <- euro_data_clean[is.finite(rowSums(euro_data_clean)), ] 
+
+# Recalculer le dendrogramme pour les données nettoyées
+cah_clean <- hclust(dist(euro_data_clean, method = "euclidean"), method = "single")
+classes <- cutree(cah_clean, k = 4)
+
+# Calcul des centres de gravité
+centers <- aggregate(. ~ Classe, data = data.frame(Classe = classes, euro_data_clean), FUN = mean)
+
+# Calcul des inerties intra-classes
+inertia <- sapply(unique(classes), function(k) {
+  members <- euro_data_clean[classes == k, ]
+  center <- colMeans(members)
+  sum(rowSums((members - center)^2))
+})
+
+# Assigner des noms aux inerties
+names(inertia) <- paste("Classe", unique(classes))
+
+# Afficher les résultats
+cat("Centres de gravité des classes :\n")
+print(centers)
+
+cat("\nInerties intra-classes :\n")
+print(inertia)
+
+# Ajouter les classes aux données pour visualisation
+euro_data_with_classes <- euro_data_clean
+euro_data_with_classes$Classe <- as.factor(classes)
+
+# Afficher les premières lignes des données avec classes
+cat("\nAperçu des données avec les classes :\n")
+print(head(euro_data_with_classes))
+
+
 ```
+Les résultats montrent que les classes regroupent des pays présentant des caractéristiques similaires en termes de population, développement économique, et stabilité sociale. Les pays de la classe 3, par exemple, représentent les économies les plus développées et homogènes, tandis que la classe 2 contient des pays présentant des défis économiques significatifs et une grande variabilité interne.
+
+Ce découpage met également en évidence l’importance des variables économiques et environnementales dans le regroupement des pays, avec des indicateurs comme le PIB par habitant, les émissions de gaz à effet de serre, et les prix de l’électricité jouant un rôle clé dans la différenciation des groupes. Cela reflète des similarités et des divergences dans le développement économique et la gestion des ressources entre les pays européens.
+Exemple de résultats :
+
+    Classe 1 : Population = 6 757 781, Gaz à effet de serre = 8,37 T/h, Inflation = 7,26 %.
+    Classe 2 : Population = 5 841 513, Gaz à effet de serre = 6,53 T/h, Inflation = 5,00 %.
+    Classe 3 : Population = 8 435 884, Gaz à effet de serre = 9,30 T/h, Inflation = 6,00 %.
+    Classe 4 : Population = 3 675 373, Gaz à effet de serre = 10,40 T/h, Inflation = 10,90 %.
+
+En résumé, les centres de gravité offrent une description claire des caractéristiques dominantes de chaque classe, et les inerties intra-classes permettent de mesurer leur homogénéité ou hétérogénéité.
+
+
+
+
 
 
 ```{r, fig.width=14, fig.height=10}
@@ -869,24 +897,19 @@ par(mfrow = c(1, 1))  # Réinitialiser l'affichage
 
 
 ```
+La classification réalisée avec le critère de Ward met en évidence des regroupements plus homogènes par rapport à la méthode du saut minimum. En effet, le critère de Ward minimise la variance intra-classe à chaque étape, ce qui aboutit à des groupes plus équilibrés en termes de similarités internes. Les fusions observées dans le dendrogramme de Ward se produisent de manière progressive et uniforme, illustrant une intégration cohérente des pays dans des groupes.
+
+En comparaison, la classification avec le saut minimum privilégie les regroupements basés uniquement sur la proximité immédiate entre les éléments, ce qui peut conduire à des groupes moins équilibrés. Les fusions dans ce cas se produisent à des hauteurs plus irrégulières, reflétant une plus grande hétérogénéité des groupes finaux. Cela peut être utile pour explorer des proximités locales mais offre moins d’interprétabilité globale.
+
+Dans le cas du critère de Ward, les pays sont regroupés selon des caractéristiques économiques et sociales communes, ce qui permet d’identifier des clusters cohérents et interprétables. Par exemple, les pays ayant des niveaux similaires de PIB par habitant ou d'émissions de gaz à effet de serre tendent à être regroupés dans la même classe. En revanche, avec le saut minimum, les regroupements peuvent être influencés par des proximités géographiques ou d’autres caractéristiques ponctuelles.
+
+En conclusion, le critère de Ward se révèle particulièrement adapté pour une analyse visant à identifier des structures globales et homogènes dans les données, tandis que le saut minimum peut être utile pour explorer des relations locales ou des proximités immédiates. Les deux approches offrent des perspectives complémentaires sur les regroupements des pays.
+
+
 
 
 ```{r}
-# Qustion 4  Effectuez une autre classification en utilisant le critère de Ward. Commentez les différences de résultats.
-# Découpage en classes avec les deux méthodes
-classes_single <- cutree(cah_single_reduced, k = 4)
-classes_ward <- cutree(cah_ward, k = 4)
 
-# Ajouter les classes aux données
-euro_data_with_classes <- data.frame(euro_data_normalized, Classe_Single = classes_single, Classe_Ward = classes_ward)
-
-# Afficher un aperçu
-head(euro_data_with_classes)
-```
-
-
-```{r}
-# Fixer le nombre de classes
 # question 5 
 # Vérifier les NA ou NaN dans les données normalisées
 cat("Y a-t-il des NA/NaN dans les données ?\n")
@@ -904,12 +927,7 @@ print(any(is.na(euro_data_normalized)))
 ```
 
 
-```{r}
-euro_data_normalized <- apply(euro_data_normalized, 2, function(x) {
-  ifelse(is.na(x), mean(x, na.rm = TRUE), x)
-})
-print(any(is.na(euro_data_normalized)))
-```
+
 
 
 ```{r}
@@ -926,10 +944,12 @@ cat("Classes affectées par k-means :\n")
 print(kmeans_result$cluster)
 
 cat("\nCentres des classes :\n")
-print(round(kmeans_result$centers, 2))
+# print(round(kmeans_result$centers, 2))
+  print(round(kmeans_result$centers, 2), row.names = FALSE)
 
 cat("\nInertie intra-classe totale :\n")
-print(round(kmeans_result$tot.withinss, 2))
+print(round(kmeans_result$tot.withinss, 2),row.names = FALSE)
+
 ```
 
 
@@ -954,15 +974,76 @@ plot(1:max_k, inertie_expliquee, type = "b", pch = 20, col = "blue",
      main = "Inertie expliquée en fonction du nombre de classes")
 
 ```
+L'algorithme des k-means, appliqué avec k=4 classes, a permis de regrouper les pays en fonction de leurs similarités sur les variables normalisées. Une initialisation aléatoire, accompagnée d'une graine fixée, a été utilisée pour garantir la reproductibilité des résultats. Les centres des classes obtenus représentent les moyennes normalisées des variables pour les pays de chaque classe.
 
+La courbe d'inertie expliquée montre une amélioration continue lorsque kk augmente, traduisant une meilleure distinction entre les groupes. Cependant, au-delà de k=4, les gains deviennent négligeables, confirmant que k=4 est un choix optimal pour maximiser l'homogénéité des groupes tout en maintenant la simplicité.
 
+Les centres des classes révèlent des différences significatives entre les groupes. Par exemple :
+
+    Classe 1 : Pays avec une population élevée, un salaire minimum important, mais une faible dépendance énergétique.
+    Classe 3 : Pays avec des niveaux plus élevés de gaz à effet de serre et un PIB par habitant supérieur à la moyenne.
+    Classe 4 : Pays caractérisés par des émissions réduites et des prix de l'électricité relativement bas.
+
+L'algorithme k-means se distingue des méthodes hiérarchiques (comme Ward ou le saut minimum) par sa capacité à minimiser directement l'inertie intra-classe. Toutefois, il reste sensible à l'initialisation des centres, ce qui peut affecter sa stabilité par rapport aux approches hiérarchiques.
 
 
 
 ```{r}
-# Question 7 
-# Étape 1 : Effectuer l'ACP
-# Effectuer l'ACP sur les données normalisées
+#6
+# Initialiser les variables
+max_k <- 10  # Tester jusqu'à 10 classes
+inertie_totale <- sum(scale(euro_data_normalized, center = TRUE, scale = FALSE)^2)
+inertie_intra <- numeric(max_k)
+inertie_expliquee <- numeric(max_k)
+
+# Calculer l'inertie intra-classe pour chaque k
+for (k in 1:max_k) {
+  set.seed(42)  # Graine pour reproductibilité
+  kmeans_result <- kmeans(euro_data_normalized, centers = k, nstart = 10)
+  inertie_intra[k] <- kmeans_result$tot.withinss
+  inertie_expliquee[k] <- 1 - (inertie_intra[k] / inertie_totale)
+}
+
+# Détection manuelle du coude
+diff_inertie <- diff(inertie_expliquee)  # Calculer les différences successives
+optimal_k <- which.max(diff_inertie < 0.05) + 1  # Trouver le premier petit gain marginal
+
+# Afficher les résultats
+cat("Nombre optimal de classes selon la méthode du coude :", optimal_k, "\n")
+
+# Tracer la courbe de l'inertie expliquée
+plot(1:max_k, inertie_expliquee, type = "b", pch = 20, col = "blue",
+     xlab = "Nombre de classes (k)", ylab = "Inertie expliquée (%)",
+     main = "Inertie expliquée en fonction du nombre de classes")
+abline(v = optimal_k, col = "red", lty = 2)  # Marquer le coude sur la courbe
+
+
+```
+Nous avons appliqué l'algorithme des kk-means sur les données normalisées en faisant varier le nombre de classes (kk) de 1 à 10, et nous avons calculé l'inertie expliquée pour chaque valeur de kk.
+Affichage de l'inertie expliquée :
+
+La courbe ci-dessus montre l'inertie expliquée en fonction du nombre de classes (kk). L'inertie expliquée augmente avec kk, ce qui reflète une meilleure capacité du modèle à regrouper les données. Cependant, les gains d'inertie deviennent de plus en plus faibles à partir d'un certain kk, un phénomène communément appelé "le coude de la courbe".
+Détection automatique du coude :
+
+Pour identifier le nombre optimal de classes, nous avons utilisé un critère basé sur les variations marginales de l'inertie expliquée (ΔΔ inertie). En comparant les gains d'inertie successive, le "coude" a été détecté pour k=8k=8 (ligne rouge sur le graphique), ce qui correspond à une valeur au-delà de laquelle les gains deviennent négligeables.
+Justification du critère :
+
+Le critère choisi repose sur l'équilibre entre l'inertie intra-classe et la simplicité du modèle. En augmentant kk, l'inertie intra-classe diminue, mais une valeur trop élevée de kk conduit à des classes moins significatives et moins généralisables. k=8k=8 permet donc de maximiser l'homogénéité des classes tout en maintenant une complexité raisonnable.
+Comparaison avec d'autres algorithmes :
+
+En comparant ces résultats avec les classifications obtenues par les méthodes hiérarchiques (Ward, saut minimum), nous observons que :
+
+    Les classifications obtenues par kk-means sont différentes car cet algorithme minimise directement l'inertie intra-classe et dépend fortement de l'initialisation des centres.
+    Les méthodes hiérarchiques, comme Ward, sont moins sensibles à l'initialisation mais peuvent produire des groupes légèrement différents en raison de leur approche ascendante.
+
+Conclusion :
+
+L'algorithme des kk-means avec k=8k=8 est un choix optimal selon notre critère basé sur le coude de la courbe. Cependant, les résultats diffèrent légèrement selon les algorithmes utilisés, en raison des hypothèses et des mécanismes spécifiques à chaque méthode. Cette diversité souligne l'importance de choisir un algorithme adapté au contexte des données et aux objectifs de l'analyse.
+
+```{r}
+
+#question 7. Effectuez une ACP des données et représentez les classes obtenues par CAH et par centres mobiles dans les plans
+#factoriels retenus afin d’inspecter visuellement la qualité ou la représentation de la classification.
 res_acp <- prcomp(euro_data_normalized, center = TRUE, scale. = TRUE)
 
 # Résumé de l'ACP pour comprendre les variances expliquées
@@ -971,7 +1052,7 @@ print(summary(res_acp))
 
 # Étape 2 : Récupérer les résultats de classification
 # Fixer le nombre de classes optimal
-k <- 4  # Ajuster selon les résultats précédents
+k <- 4  
 
 # Classes obtenues par CAH
 classes_cah <- cutree(cah_single_reduced, k = k)
@@ -1045,13 +1126,28 @@ plot(coord_acp$PC1, coord_acp$PC2,
 par(mfrow = c(1, 1))  # Réinitialiser l'affichage
 
 ```
+Analyse en composantes principales (ACP) et visualisation des classifications :
 
+    Résumé de l'ACP :
+    L'analyse en composantes principales a été réalisée sur les données normalisées pour réduire la dimensionnalité et visualiser les classes dans un plan factoriel. Les deux premières composantes principales expliquent ensemble 44,74 % de la variance totale des données. Cela justifie leur utilisation pour représenter les données dans un plan bidimensionnel.
+
+    Visualisation des classes :
+    Les résultats des classifications obtenues par CAH et k-means ont été projetés sur le plan factoriel formé par les deux premières composantes principales :
+        Plan factoriel avec classes CAH : La méthode de CAH répartit les observations en regroupements compacts, mais certains chevauchements sont visibles.
+        Plan factoriel avec classes k-means : Les groupes définis par k-means semblent plus homogènes, et la répartition des points est moins chevauchée, ce qui reflète une minimisation directe de l'inertie intra-classe.
+
+    Interprétation des différences :
+        La classification obtenue par k-means optimise directement l'homogénéité des groupes à l'intérieur des classes, ce qui est visible dans leur projection sur le plan factoriel. Cependant, elle est sensible à l'initialisation aléatoire des centres.
+        En revanche, la classification CAH utilise une approche hiérarchique et se base sur des fusions successives. Cela peut entraîner des regroupements moins homogènes dans certains cas, surtout si les distances entre certaines observations sont très similaires.
+
+    Conclusion :
+    L'ACP combinée aux représentations graphiques permet de comparer visuellement les deux méthodes de classification. Bien que les deux méthodes soient cohérentes dans l'ensemble, k-means semble mieux adapté pour maximiser l'homogénéité des classes dans ce contexte. Toutefois, le choix entre ces deux méthodes dépend des objectifs spécifiques de l'étude, comme la stabilité ou la compacité des classes.
 
 
 
 
 ```{r}
-# Étape 1 : Définir une zone restreinte dans le plan factoriel
+#8
 zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
 
 # Afficher les pays dans la zone restreinte
@@ -1069,10 +1165,39 @@ plot(zone_restante$PC1, zone_restante$PC2,
 text(zone_restante$PC1, zone_restante$PC2, labels = rownames(zone_restante), pos = 4, cex = 0.8)
 
 ```
-```{r}
-tinytex::is_tinytex()
+En examinant la zone restreinte choisie (où les composantes principales PC1PC1 et PC2PC2 se situent dans un intervalle limité), nous observons les proximités entre certains pays. Ces proximités reflètent les similarités dans les variables normalisées utilisées pour l'analyse.
 
-```
+Les pays identifiés dans cette zone restreinte sont : 1, 9, 19, 21, 25, et 27. Selon les classes issues des deux méthodes de classification (CAH et k-means) :
+
+    Classe CAH : Tous ces pays appartiennent à la même classe (Classe 1), indiquant une homogénéité selon cette méthode de regroupement. Cela suggère que ces pays partagent des caractéristiques communes sur l'ensemble des variables.
+
+    Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (3, 5, 6, et 7). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
+
+Analyse des proximités
+
+Dans le graphique, on observe que :
+
+    Les pays 25 et 27 sont proches sur le plan factoriel (PC1PC1 et PC2PC2), suggérant une similarité forte entre eux.
+    Les pays 19, 21, et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
+    Le pays 1 est éloigné du reste du groupe, bien qu'il fasse partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
+
+Ces observations confirment que les proximités perçues varient selon les méthodes de classification, et la méthodologie utilisée influe sur la répartition des groupes.
+
+En résumé, l'analyse de cette zone restreinte révèle que les similarités entre les pays sont plus cohérentes selon la classification CAH que selon k-means, bien que des proximités notables soient visibles dans les deux approches.
 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+*Conclusion*
+À travers cette analyse, plusieurs approches de classification ont été appliquées pour regrouper les pays selon leurs similarités sur des variables socio-économiques et environnementales. Chaque méthode, qu'il s'agisse de la Classification Ascendante Hiérarchique (CAH), de k-means, ou de l'Analyse en Composantes Principales (ACP), offre une perspective unique :
+
+    CAH a mis en évidence des regroupements stables et homogènes, particulièrement adaptés pour explorer des hiérarchies naturelles et globales entre les pays.
+    k-means a permis d'optimiser la minimisation de l'inertie intra-classe, fournissant des regroupements plus adaptés à des configurations de données complexes mais sensibles à l'initialisation.
+    ACP a facilité la visualisation des proximités entre les pays dans un espace réduit, tout en révélant les dimensions principales qui expliquent la majorité de la variance des données.
+
+Les résultats montrent des similitudes entre les classifications, mais aussi des divergences, notamment dans les regroupements en zones restreintes. Ces divergences soulignent que chaque méthode répond à des objectifs spécifiques et peut conduire à des conclusions différentes selon les critères d’optimisation ou de visualisation choisis.
+
+En conclusion, l’analyse combinée de ces méthodes offre une vision approfondie des relations entre les pays, permettant de mieux comprendre leurs proximités et divergences. Cette complémentarité enrichit l'interprétation et montre l'importance de choisir une méthode en fonction des objectifs spécifiques de l'étude.
