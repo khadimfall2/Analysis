@@ -49,9 +49,9 @@ Les données analysées dans ce projet concernent différents indicateurs socio-
     
   Taux de risque de pauvreté ou d'exclusion sociale : Pourcentage de la population à risque de pauvreté ou d'exclusion sociale.
 
-L’objectif de cette analyse est d’explorer et de réduire la dimensionnalité des données grâce à une analyse en composantes principales (ACP), puis de grouper les pays selon leurs caractéristiques à l’aide de méthodes de classification. L’ACP permet de visualiser les similitudes entre pays et d’identifier les variables les plus remarquables . Les méthodes de classification, notamment la classification ascendante hiérarchique (CAH) et l’algorithme des centres mobiles (k-means), permettent d’interpréter les regroupements obtenus. Les résultats des classifications seront comparés afin de comprendre les proximités entre pays et leur cohérence.
+L’objectif de cette analyse est d’explorer et de réduire la dimensionnalité des données grâce à une analyse en composantes principales (ACP), puis de grouper les pays selon leurs caractéristiques à l’aide de méthodes de classification. L’ACP permet de visualiser les similitudes entre pays et d’identifier les variables les plus importantes. Les méthodes de classification, notamment la classification ascendante hiérarchique (CAH) et l’algorithme des centres mobiles (k-means), permettent d’interpréter les regroupements obtenus. Les résultats des classifications seront comparés afin de comprendre les proximités entre pays et leur cohérence.
 
-Pour la préparation des données, une normalisation a été appliquée dans certains cas pour rendre les variables comparables. L’analyse inclut la création de matrices de dissimilarité, l’utilisation de la décomposition en valeurs propres pour l’ACP, et l’application des méthodes de classification sur les données normalisées. Les regroupements obtenus seront interprétés à travers l’étude des centres de gravité, des inerties et des plans factoriels. Enfin, une attention particulière sera portée à l’analyse des proximités des pays dans des zones spécifiques de l’espace factoriel, afin de mieux comprendre les similarités entre pays.
+Pour la préparation des données, une normalisation a été appliquée pour rendre les variables comparables. L’analyse inclut la création de matrices de dissimilarité, l’utilisation de la décomposition en valeurs propres pour l’ACP, et l’application des méthodes de classification sur les données normalisées. Les regroupements obtenus seront interprétés à travers l’étude des centres de gravité, des inerties et des plans factoriels. Enfin, une attention particulière sera portée à l’analyse des proximités des pays dans des zones spécifiques de l’espace factoriel, afin de mieux comprendre les similarités entre pays.
 
 
 
@@ -73,6 +73,10 @@ knitr::opts_chunk$set(comment = NA)
 ```
 
 
+```{r}
+knitr::opts_chunk$set(comment = NA)
+
+```
 
 
 ```{r}
@@ -95,7 +99,7 @@ euro_data_normalized <- as.data.frame(lapply(euro_data[, -1], function(x) {
 
 
 ```{r}
-# Supprimer la première colonne contenant les pays.
+# Supprimer la première colonne si elle contient des noms (optionnel)
 euro_data <- euro_data[, -1]
 
 
@@ -320,12 +324,10 @@ for (col_name in selected_columns) {
 
 ```
 
-Electricity Prices (Prix de l'électricité) :
-La médiane est située dans le quart inférieur de la boîte, indiquant que la moitié des pays ont des prix de l'électricité inférieurs ou égaux à cette valeur médiane. L'absence de valeurs aberrantes reflète une distribution relativement homogène parmi les pays. La position basse de la médiane montre que les prix inférieurs à la médiane sont davantage concentrés, tandis que les prix supérieurs couvrent une plage plus étendue, traduisant une certaine variabilité.
+Pour le prix d'électricité  , la médiane est située dans le quart inférieur de la boîte. Cela signifie que la moitié des pays ont des prix de l'électricité inférieurs ou égaux à cette valeur médiane. La position basse de la médiane indique que les valeurs inférieures à la médiane sont davantage concentrées, tandis que les valeurs supérieures couvrent une plage plus étendue.
 
-Energy Imports Dependency (Dépendance aux importations d'énergie) :
-La médiane est située dans le quart supérieur de la boîte, ce qui signifie que la moitié des pays ont une dépendance énergétique inférieure ou égale à cette valeur. Contrairement à la variable précédente, cette distribution montre également une absence de valeurs aberrantes. La position élevée de la médiane reflète une plus grande dispersion des valeurs inférieures, tandis que les valeurs supérieures à la médiane sont relativement concentrées, indiquant une variabilité marquée dans la dépendance énergétique parmi les pays européens.
-
+Alors que pour la dépendence énergétique, 
+La médiane est située dans le quart supérieur de la boîte. Cela implique que la moitié des pays ont une dépendance énergétique inférieure ou égale à la médiane. La position élevée de la médiane indique que les valeurs inférieures sont plus dispersées, tandis que les valeurs supérieures à la médiane sont relativement concentrées.
 
 
 
