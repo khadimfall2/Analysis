@@ -466,12 +466,17 @@ ggplot(correlation_long, aes(Var1, Var2, fill = value)) +
        y = "Variables") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
+
 La heatmap de la matrice de corrélation illustre les relations linéaires entre les différentes variables. Les couleurs rouges indiquent des corrélations positives élevées, tandis que les teintes bleues traduisent des corrélations négatives significatives. Les zones blanches ou pâles, quant à elles, reflètent des relations faibles ou inexistantes.
 
-Par exemple, on remarque une forte corrélation positive entre Population et Youth Population, confirmant que les pays avec une population globale importante ont également une proportion significative de jeunes. Une corrélation négative marquée est visible entre Renewable Energy et Energy Imports Dependency, mettant en évidence l'effet des énergies renouvelables sur la réduction de la dépendance énergétique. À l'inverse, des variables comme Gender Pay Gap et Minimum Wage montrent peu ou pas de corrélation, traduisant l'absence de relation linéaire entre elles.
+Par exemple, on remarque une forte corrélation positive entre Population et First Time Asylum Applicants, suggérant que les pays avec une population élevée attirent davantage de demandes d'asile. De même, une forte corrélation existe entre GDP per Capita et Minimum Wage, montrant que les pays avec un PIB élevé ont tendance à offrir des salaires minimums plus élevés.
 
-En somme, ce graphique offre une visualisation claire des relations fortes et faibles entre les variables, facilitant l'identification des interactions les plus significatives.
+Une corrélation négative marquée est visible entre Renewable Energy et Energy Imports Dependency, mettant en évidence l'impact positif des énergies renouvelables sur la réduction de la dépendance énergétique. Cela reflète probablement une autonomie énergétique accrue dans les pays intégrant davantage d’énergies renouvelables.
 
+À l'inverse, certaines variables montrent peu ou pas de corrélation, traduisant une absence de relation linéaire notable. Par exemple, Gender Pay Gap et Minimum Wage, ou encore Electricity Prices et Early School Leavers, n'affichent aucune relation significative, ce qui indique que l'évolution de l'une n'apporte aucune information sur l'autre.
+
+Enfin, ce graphique offre une visualisation claire des relations fortes et faibles entre les variables, facilitant l'identification des interactions les plus significatives pour l’analyse. Il permet également de mettre en lumière les variables qui évoluent de manière indépendante les unes des autres.Ce qui n'était pas possible avec la matrice de variance-covariance 
 
 
 

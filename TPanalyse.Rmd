@@ -87,10 +87,7 @@ euro_data_normalized <- as.data.frame(lapply(euro_data[, -1], function(x) {
 
 
 
-
-
 *Diagrammes à mmoustache*
-
 
 
 
@@ -329,10 +326,11 @@ La médiane est située dans le quart supérieur de la boîte, ce qui signifie q
 
 
 
-Pour appoter plus de visibilité  nous allons remplacer les colones pour des colones numérique en se servant de cette légense 
-Légende des colonnes (à remplir manuellement si besoin) :
+Pour apporter davantage de visibilité , nous allons remplacer les noms des variables des colonnes par des valeurs numériques, en nous référant à la légende suivante.
 
 Légende des colonnes :  
+
+
 [1]: Population  
 [2]: Youth.population  
 [3]: First.time.asylum.applicants  
@@ -350,11 +348,7 @@ Légende des colonnes :
 [15]: Electricity.prices  
 [16]: Energy.imports.dependency
 
-La matrice de variance-covariance VV calcule la dispersion des variables ainsi que les relations linéaires entre elles. Les valeurs sur la diagonale principale représentent la variance de chaque variable. Par exemple, la variance de Population est très élevée (4.653257e+14), reflétant une grande dispersion entre les pays, comme cela a été observé dans les diagrammes à moustaches. En revanche, la variance de Gender Pay Gap est beaucoup plus faible (25.6190), confirmant l’homogénéité relative notée précédemment, bien qu'elle reste significative.
 
-Une covariance négative entre Renewable Energy et Energy Imports Dependency (−290.3213) reflète une relation inverse plus marquée : les pays avec une part plus élevée d’énergies renouvelables, comme l’Islande et la Norvège, sont généralement moins dépendants des importations d’énergie.
-
-La matrice V enrichit l’analyse exploratoire initiale en fournissant une quantification précise des dispersions et interactions entre variables. Ces résultats constituent une base solide pour des analyses plus avancées, comme l'analyse en composantes principales (ACP), tout en préparant la transition vers l'étude des relations normalisées via la matrice de corrélation.
 
 
 ```{r}
@@ -386,9 +380,12 @@ print(V[, 10:16])
 
 
 ```
-La heatmap de la matrice de variance-covariance illustre les relations entre les variables à travers des intensités de couleurs. Les zones rouges traduisent des covariances fortes, tandis que les zones jaunes indiquent des relations plus faibles. Les zones blanches signalent des données manquantes ou nulles.
+La matrice de variance-covariance V calcule la dispersion des variables ainsi que les relations linéaires entre elles. Les valeurs sur la diagonale principale représentent la variance de chaque variable. Par exemple, la variance de Population est très élevée (4.653257e+14), reflétant une grande dispersion entre les pays, comme cela a été observé dans les diagrammes à moustaches. En revanche, la variance de Gender Pay Gap est beaucoup plus faible (25.6190), confirmant l’homogénéité relative notée précédemment, bien qu'elle reste significative.
 
-Par exemple, des relations marquées apparaissent entre Population et Youth Population, ainsi qu'entre Renewable Energy et Energy Imports Dependency, confirmant les observations sur la dépendance énergétique. Cette visualisation synthétique facilite l’identification des interactions clés et des lacunes dans les données.
+Une covariance négative entre Renewable Energy et Energy Imports Dependency (−290.3213) reflète une relation inverse plus marquée : les pays avec une part plus élevée d’énergies renouvelables, comme l’Islande et la Norvège, sont généralement moins dépendants des importations d’énergie.
+
+La matrice V enrichit l’analyse exploratoire initiale en fournissant une quantification précise des dispersions et interactions entre variables. Ces résultats constituent une base solide pour des analyses plus avancées, comme l'analyse en composantes principales (ACP), tout en préparant la transition vers l'étude des relations normalisées via la matrice de corrélation.
+
 
 
 
@@ -410,11 +407,13 @@ heatmap(as.matrix(V_rounded),
 
 ```
 
-La matrice de corrélation offre une vision normalisée des relations linéaires entre les variables, avec des coefficients compris entre -1 et 1. Une corrélation positive modérée est observée entre Population et Youth Population (r=0.87), indiquant que les pays avec une population élevée tendent à avoir une proportion importante de jeunes.
 
-Une relation négative significative est également visible entre Renewable Energy et Energy Imports Dependency (r=−0.54), confirmant que les pays intégrant davantage d’énergies renouvelables sont généralement moins dépendants des importations énergétiques.
+Comme les données ne sont pas normalisées, chaque variable est utilisée avec son échelle propre, ce qui limite la possibilité de faire des interprétations précises quant aux variances et covariances. En effet, des échelles différentes rendent difficile la comparaison directe des intensités entre les variables.
 
-De plus, une corrélation très forte (r=0.87) entre Youth Unemployment Rate et Unemployment Rate montre une relation directe entre ces deux indicateurs. En revanche, certaines variables comme Gender Pay Gap et Minimum Wage (r=−0.05) affichent une corrélation quasi nulle, suggérant une absence de relation linéaire significative. Cette matrice met ainsi en évidence les liens les plus marqués tout en soulignant les variables peu ou pas reliées entre elles.
+Malgré cela, on peut remarquer que la variable Population se distingue par une coloration plus marquée de sa variance, indiquant une forte variation au sein de cette variable. Les zones blanches représentent des valeurs non définies ou nulles, tandis que pour le reste la couleur rouge ne nous permets  pas de discerner de différences significatives entre les covariances des autres variables.
+
+Bien que cette matrice de variance-covariance fournisse des informations limitées en profondeur, elle reste utile pour donner une vue d'ensemble des relations potentielles entre les variables. Cependant, pour extraire davantage d'informations et permettre des comparaisons cohérentes entre les variables, il est préférable d'utiliser la matrice de corrélation, qui repose sur des données normalisées.
+
 
 
 
@@ -436,18 +435,17 @@ print("Matrice de corrélation (indices pour les colonnes) :")
 print(correlation_matrix_rounded)
 
 ```
+La matrice de corrélation offre une vision normalisée des relations linéaires entre les variables, avec des coefficients compris entre -1 et 1. Une corrélation positive modérée est observée entre Population et Youth Population (r=0.87), indiquant que les pays avec une population élevée tendent à avoir une proportion importante de jeunes.
 
+Une relation négative significative est également visible entre Renewable Energy et Energy Imports Dependency (r=−0.54), confirmant que les pays intégrant davantage d’énergies renouvelables sont généralement moins dépendants des importations énergétiques.
+
+De plus, une corrélation très forte (r=0.87) entre Youth Unemployment Rate et Unemployment Rate montre une relation directe entre ces deux indicateurs. En revanche, certaines variables comme Gender Pay Gap et Minimum Wage (r=−0.05) affichent une corrélation quasi nulle, suggérant une absence de relation linéaire significative. Cette matrice met ainsi en évidence les liens les plus marqués tout en soulignant les variables peu ou pas reliées entre elles.
 
 ```{r}
 # Transformer la matrice de corrélation en format long
 correlation_long <- reshape2::melt(round(correlation_matrix, 2))
 ```
 
-La heatmap de la matrice de corrélation illustre les relations linéaires entre les différentes variables. Les couleurs rouges indiquent des corrélations positives élevées, tandis que les teintes bleues traduisent des corrélations négatives significatives. Les zones blanches ou pâles, quant à elles, reflètent des relations faibles ou inexistantes.
-
-Par exemple, on remarque une forte corrélation positive entre Population et Youth Population, confirmant que les pays avec une population globale importante ont également une proportion significative de jeunes. Une corrélation négative marquée est visible entre Renewable Energy et Energy Imports Dependency, mettant en évidence l'effet des énergies renouvelables sur la réduction de la dépendance énergétique. À l'inverse, des variables comme Gender Pay Gap et Minimum Wage montrent peu ou pas de corrélation, traduisant l'absence de relation linéaire entre elles.
-
-En somme, ce graphique offre une visualisation claire des relations fortes et faibles entre les variables, facilitant l'identification des interactions les plus significatives.
 
 ```{r}
 # Heatmap de la matrice de corrélation
@@ -463,18 +461,29 @@ ggplot(correlation_long, aes(Var1, Var2, fill = value)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Les composantes principales forment une base orthonormée, ce qui est prouvé numériquement. Le produit scalaire des vecteurs propres (matrice de rotation transposée multipliée par elle-même) donne une matrice diagonale avec des valeurs de 1 sur la diagonale et 0 ailleurs, confirmant leur orthogonalité. Les normes des vecteurs propres, calculées comme la racine carrée de la somme des carrés des coefficients, sont toutes égales à 1, prouvant qu'ils sont normalisés.
 
-Le paramètre center = TRUE recentre chaque variable en soustrayant sa moyenne, garantissant que les composantes principales sont calculées par rapport à un centre des données égal à zéro. Le paramètre scale = TRUE met chaque variable à l'échelle en divisant par son écart type, standardisant ainsi les variables pour qu'elles aient toutes une variance de 1, ce qui est crucial lorsque les variables ont des échelles différentes.
+La heatmap de la matrice de corrélation illustre les relations linéaires entre les différentes variables. Les couleurs rouges indiquent des corrélations positives élevées, tandis que les teintes bleues traduisent des corrélations négatives significatives. Les zones blanches ou pâles, quant à elles, reflètent des relations faibles ou inexistantes.
 
-Sans center, les composantes principales seraient biaisées par des variables aux moyennes élevées, faussant leur interprétation. Sans scale, les variables avec des échelles ou des variances élevées domineraient les calculs, influençant de manière disproportionnée les composantes principales. En combinant center et scale, chaque variable contribue de manière équitable à la définition des composantes principales.
+Par exemple, on remarque une forte corrélation positive entre Population et First Time Asylum Applicants, suggérant que les pays avec une population élevée attirent davantage de demandes d'asile. De même, une forte corrélation existe entre GDP per Capita et Minimum Wage, montrant que les pays avec un PIB élevé ont tendance à offrir des salaires minimums plus élevés.
+
+Une corrélation négative marquée est visible entre Renewable Energy et Energy Imports Dependency, mettant en évidence l'impact positif des énergies renouvelables sur la réduction de la dépendance énergétique. Cela reflète probablement une autonomie énergétique accrue dans les pays intégrant davantage d’énergies renouvelables.
+
+À l'inverse, certaines variables montrent peu ou pas de corrélation, traduisant une absence de relation linéaire notable. Par exemple, Gender Pay Gap et Minimum Wage, ou encore Electricity Prices et Early School Leavers, n'affichent aucune relation significative, ce qui indique que l'évolution de l'une n'apporte aucune information sur l'autre.
+
+Enfin, ce graphique offre une visualisation claire des relations fortes et faibles entre les variables, facilitant l'identification des interactions les plus significatives pour l’analyse. Il permet également de mettre en lumière les variables qui évoluent de manière indépendante les unes des autres.Ce qui n'était pas possible avec la matrice de variance-covariance 
+
+
+
 
 
 ```{r}
 # 5 
 
 euro_data_replace_na <- apply(euro_data, 2, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x))
+```
 
+
+```{r}
 # Calculer les composantes principales
 res <- prcomp(euro_data_replace_na, scale = TRUE, center = TRUE)
 
@@ -500,22 +509,13 @@ dev.off()
 
 
 ```
+Les composantes principales forment une base orthonormée, ce qui est prouvé numériquement. Le produit scalaire des vecteurs propres (matrice de rotation transposée multipliée par elle-même) donne une matrice diagonale avec des valeurs de 1 sur la diagonale et 0 ailleurs, confirmant leur orthogonalité. Les normes des vecteurs propres, calculées comme la racine carrée de la somme des carrés des coefficients, sont toutes égales à 1, prouvant qu'ils sont normalisés.
+
+Le paramètre center = TRUE recentre chaque variable en soustrayant sa moyenne, garantissant que les composantes principales sont calculées par rapport à un centre des données égal à zéro. Le paramètre scale = TRUE met chaque variable à l'échelle en divisant par son écart type, standardisant ainsi les variables pour qu'elles aient toutes une variance de 1, ce qui est crucial lorsque les variables ont des échelles différentes.
+
+Sans center, les composantes principales seraient biaisées par des variables aux moyennes élevées, faussant leur interprétation. Sans scale, les variables avec des échelles ou des variances élevées domineraient les calculs, influençant de manière disproportionnée les composantes principales. En combinant center et scale, chaque variable contribue de manière équitable à la définition des composantes principales.
 
 
-```{r fig.width=10, fig.height=8}
-# Suite 5
-# Ajuster les dimensions et ajouter un titre pour plus de visibilité
-par(oma = c(0, 0, 2, 0))  
-biplot(res, scale = 0, cex = 0.8)  
-title("Biplot des composantes principales", outer = TRUE)
-
-```
-
-Les coordonnées des pays dans la nouvelle base sont déterminées par les composantes principales (PC1 et PC2), qui résument la majorité de la variance des données. Ces coordonnées sont affichées sur le premier plan factoriel, permettant une visualisation claire de leur position relative.
-
-Sur le graphique, on observe que certains pays se distinguent par leur éloignement des autres. La Norvège et l’Islande se démarquent nettement dans la partie supérieure droite, ce qui peut s’expliquer par leurs caractéristiques particulières, notamment leur indépendance énergétique et leur forte utilisation des énergies renouvelables. À l’opposé, des pays comme la Grèce, l’Espagne et l’Italie apparaissent isolés dans la partie inférieure gauche, probablement en raison de leurs spécificités économiques ou sociales.
-
-Ce type de visualisation permet d'identifier rapidement les pays qui sortent du lot, comme la Norvège et l’Islande, et, à l'opposé, l’Espagne et l’Italie. Elle aide à mieux comprendre les similarités ou les divergences entre les pays, constituant ainsi une base pour des analyses approfondies.
 
 
 ```{r}
@@ -545,11 +545,21 @@ plot(coord[, 1], coord[, 2],
 # Étape 5 : Ajouter les noms des pays sur le graphique
 text(coord[, 1], coord[, 2], labels = rownames(coord), pos = 4, cex = 0.6)
 ```
-L’ébouli des valeurs propres représente la contribution de chaque composante principale à la variance totale. Dans le graphique, la ligne bleue montre les pourcentages de variances expliquées par chaque composante, tandis que la ligne rouge illustre la variance expliquée cumulée.
+Le graphique du premier plan factoriel (PC1 vs PC2) illustre la position relative des pays selon les deux premières composantes principales, qui capturent la majorité de la variance des données. Ces composantes principales permettent de résumer l’ensemble des variables tout en conservant au mieux l’information.
 
-En analysant la variance expliquée cumulée, les cinq premières composantes principales expliquent environ 77 % de la variance totale. Cela justifie le choix de retenir les cinq premières composantes pour une analyse approfondie, car elles capturent l'essentiel de l'information tout en réduisant la dimensionnalité des données. Les composantes suivantes apportent une contribution marginale et peuvent être négligées pour simplifier l’interprétation.
+On observe une forte opposition sur l’axe 1 entre des pays comme la France et la République tchèque (Czechia). Cette opposition reflète d’importantes dissimilitudes entre ces deux pays, le premier axe représentant le maximum de variance des données. De manière similaire, l’Allemagne se situe en bas à droite et contraste fortement avec des pays comme la Bulgarie et la Hongrie, positionnés en haut à gauche, traduisant des différences marquées entre ces pays.
 
-Le critère de l’éboulis (coudée visible dans la ligne bleue après la cinquième composante) renforce également cette décision. Ainsi, la sélection des cinq premières composantes est justifiée à la fois par la proportion de variance expliquée et par la méthode visuelle.
+Sur l’axe 2, le Luxembourg et la Roumanie occupent des positions opposées, indiquant également une forte dissimilarité entre eux sur les variables résumées par cette composante. Cet axe capture une partie supplémentaire de la variance non expliquée par le premier, apportant une nouvelle perspective dans l’analyse.
+
+Des regroupements centraux sont également visibles, formant un cluster de pays comme le Portugal, la Slovénie, la Suède et Malte. Cette proximité traduit une certaine similarité entre ces pays, du point de vue de l’ensemble des variables étudiées.
+
+Par ailleurs, certains pays se distinguent nettement par leur éloignement des autres :
+
+    La Norvège et l’Islande se démarquent dans la partie supérieure droite, probablement en raison de leur indépendance énergétique et de leur forte part d’énergies renouvelables.
+    À l’opposé, la Grèce, l’Espagne et l’Italie apparaissent isolées dans la partie inférieure gauche, ce qui peut s’expliquer par leurs spécificités économiques ou sociales.
+
+En somme, ce type de visualisation permet d’identifier rapidement les regroupements et les oppositions entre pays, offrant une base précieuse pour des analyses comparatives plus approfondies.
+
 
 ```{r}
 #7 
@@ -586,13 +596,16 @@ legend("topright", legend = c("Variance expliquée", "Variance cumulée"),
 abline(v = 5, col = "darkgreen", lty = 2)  # Par exemple, si 5 composantes sont retenues
 
 ```
-Le biplot permet d’observer simultanément les projections des pays (points bleus) et des variables initiales (flèches rouges) dans le plan défini par les deux premières composantes principales (PC1 et PC2). Les pays proches sur le graphique partagent des similitudes en termes de variables, tandis que les flèches indiquent les contributions des variables aux composantes principales.
+L’ébouli des valeurs propres représente la contribution de chaque composante principale à la variance totale. Dans le graphique, la ligne bleue montre les pourcentages de variances expliquées par chaque composante, tandis que la ligne rouge illustre la variance expliquée cumulée.
 
-Les flèches rouges montrent la direction et l’intensité des variables. Par exemple, des variables comme Renewable.energy et Greenhouse.gas.emissions influencent fortement le PC1, tandis que People.at.risk.of.poverty.or.exclusion et Youth.unemployment.rate impactent davantage le PC2.
+En analysant la variance expliquée cumulée, les cinq premières composantes principales expliquent environ 77 % de la variance totale. Cela justifie le choix de retenir les cinq premières composantes pour une analyse approfondie, car elles capturent l'essentiel de l'information tout en réduisant la dimensionnalité des données. Les composantes suivantes apportent une contribution marginale et peuvent être négligées pour simplifier l’interprétation.
 
-Certains pays, comme la Norvège et l'Islande, se distinguent par leurs projections vers des valeurs élevées de Renewable.energy. À l'opposé, des pays comme la Grèce et l'Italie sont projetés dans des directions qui reflètent d’autres caractéristiques économiques et sociales.
+Le critère de l’éboulis (coudée visible dans la ligne bleue après la cinquième composante) renforce également cette décision. Ainsi, la sélection des cinq premières composantes est justifiée à la fois par la proportion de variance expliquée et par la méthode visuelle.
 
-Ce graphique est utile pour identifier les regroupements de pays basés sur des critères communs et pour comprendre les relations entre variables et composantes principales.
+
+
+
+
 
 
 
@@ -605,11 +618,14 @@ biplot(res, scale = 0,
        cex = 0.8,  # Taille des points et flèches
        col = c("blue", "red"))
 ```
-Sur les deux plans factoriels observés, plusieurs éléments significatifs ressortent. Sur le premier plan (PC2 vs PC3), Youth.unemployment.rate et Unemployment.rate se distinguent par leur alignement, reflétant une corrélation positive et leur importance pour la différenciation des pays. Renewable.energy et Inflation.rate se projettent dans des directions opposées, mettant en évidence des dynamiques contrastées entre ces variables. Le pays marqué comme 26 se démarque nettement, tandis que d'autres restent proches du centre, traduisant une certaine homogénéité.
 
-Sur le second plan (PC3 vs PC4), Energy.imports.dependency et Renewable.energy montrent une forte influence, indiquant des relations marquées entre la dépendance énergétique et les efforts en énergies renouvelables. Population et First.time.asylum.applicants se projettent dans des directions opposées, soulignant des contrastes importants. Le pays 11 sort particulièrement du lot sur l'axe PC3, tandis que les autres se regroupent davantage autour du centre.
 
-Ces analyses mettent en lumière les relations complexes entre variables et pays, permettant de mieux comprendre les dynamiques sous-jacentes tout en identifiant les facteurs qui différencient certains pays.
+Le biplot illustre simultanément les projections des pays, identifiés par des numéros en bleu, et des variables initiales, représentées par des flèches rouges, dans le plan formé par les deux premières composantes principales (PC1 et PC2). Cette représentation permet d’observer les regroupements de pays ayant des profils similaires ainsi que l’influence des variables sur les composantes principales. Les flèches rouges indiquent la direction et l’intensité des variables : plus la flèche est longue, plus la contribution de la variable à la composante principale est importante. On remarque que Renewable.energy et Greenhouse.gas.emissions influencent fortement le PC1, tandis que des variables comme People.at.risk.of.poverty.or.exclusion et Youth.unemployment.rate ont un impact plus prononcé sur le PC2.
+
+Les pays proches sur le graphique ont des caractéristiques comparables. Par exemple, la Norvège (29) et l’Islande (28), situées à l’extrémité droite, se démarquent par leurs valeurs élevées de Renewable.energy, reflétant leur forte dépendance aux énergies renouvelables. En revanche, la Grèce (12) et l’Italie (15), situées à l’opposé dans le plan factoriel, présentent des spécificités économiques différentes, probablement liées à un PIB par habitant plus faible ou à un taux de chômage plus élevé. On observe également un regroupement central formé par le Portugal (11), la Slovénie (25), la Suède (27) et Malte (19), suggérant des similitudes dans leurs profils globaux.
+
+Ce biplot facilite l’analyse des similarités et divergences entre les pays et met en évidence les variables expliquant ces différences. Il constitue ainsi un outil essentiel pour interpréter les relations complexes au sein des données multidimensionnelles.
+
 
 ```{r, fig.width=8, fig.height=10}
 #  9 
@@ -624,11 +640,34 @@ biplot(res, choices = c(3, 4), scale = 0,
        cex = 0.8,  # Taille des points et flèches
        col = c("blue", "red"))  
 ```
-Les cos² indiquent la qualité de la représentation des variables sur le premier plan factoriel (PC1-PC2). Plus le cos² est élevé, meilleure est la représentation de la variable sur ce plan. Les variables les mieux représentées incluent Minimum.wage, GDP.per.capita, et Youth.population, avec des cos² respectifs de 0.23, 0.21 et 0.16. Ces variables jouent donc un rôle clé dans la structuration de ce plan factoriel.
+"Bien que le plan formé par les composantes principales PC1 et PC2 capture la majeure partie de la variance des données, il ne représente pas nécessairement toutes les informations de manière optimale pour chaque variable ou individu. En effet, certaines variables ou certains pays pourraient être mieux expliqués dans d’autres plans factoriels. Il est donc pertinent d’explorer des plans complémentaires, tels que PC2 vs PC3, pour obtenir une vision plus exhaustive et détaillée des relations entre les variables et les pays."
+Le biplot montre simultanément les projections des pays et des variables dans le plan formé par les composantes principales PC2 et PC3. Ce plan permet d’explorer des informations supplémentaires qui n’étaient pas totalement visibles dans le premier plan (PC1 vs PC2).
 
-En revanche, des variables comme Gender.pay.gap et Early.school.leavers ont des cos² très faibles (0.05 et 0.00), indiquant qu'elles ne sont pas bien représentées sur ce plan. Cela signifie que leur contribution à l'inertie totale du plan PC1-PC2 est limitée, et qu'elles pourraient être mieux représentées sur d'autres plans factoriels.
+Les variables représentées par les flèches rouges indiquent leur contribution au plan PC2 vs PC3. On remarque que certaines variables, comme Renewable Energy et Youth Population, ont une forte contribution dans la direction de PC3. De même, des variables comme Gender Pay Gap et Inflation Rate influencent davantage le PC2.
 
-Ces résultats permettent de se concentrer sur les variables dominantes pour analyser les premières composantes principales et comprendre leur impact sur la structuration des individus et des variables.
+Du côté des pays (points bleus numérotés), on observe que :
+
+    Les pays 28 (Norvège) et 29 (Islande) se distinguent encore une fois dans la direction de Renewable Energy, reflétant leur forte proportion d’énergie renouvelable dans la consommation totale.
+    Les pays 21 (Belgique) et 13 (Irlande) sont projetés dans la direction de Inflation Rate et Gender Pay Gap, indiquant des caractéristiques liées à ces indicateurs économiques.
+    Les pays 11 (Grèce) et 15 (Espagne) se situent à l’extrémité inférieure de PC3, traduisant des particularités liées à des variables comme Electricity Prices et First Time Asylum Applicants.
+
+Le plan PC2 vs PC3 révèle donc des regroupements et des oppositions supplémentaires entre les pays, qui étaient moins visibles dans le plan précédent. Ce type d’analyse permet de compléter la compréhension des relations complexes entre les variables et les pays européens.
+
+
+
+
+Sur le second plan (PC3 vs PC4), Energy.imports.dependency et Renewable.energy montrent une forte influence, indiquant des relations marquées entre la dépendance énergétique et les efforts en énergies renouvelables. Population et First.time.asylum.applicants se projettent dans des directions opposées, soulignant des contrastes importants. Le pays 11 sort particulièrement du lot sur l'axe PC3, tandis que les autres se regroupent davantage autour du centre.
+
+Ces analyses mettent en lumière les relations complexes entre variables et pays, permettant de mieux comprendre les dynamiques sous-jacentes tout en identifiant les facteurs qui différencient certains pays.
+
+
+
+
+
+
+
+
+
 
 ```{r, fig.width=8, fig.height=10}
 
@@ -647,10 +686,13 @@ best_variables <- names(sort(cos2_PC1_PC2, decreasing = TRUE))
 cat("\nVariables les mieux représentées par PC1-PC2 (par ordre de qualité) :\n")
 print(best_variables)
 ```
-Les individus [1] et [27] ont des contributions relativement élevées sur certaines composantes principales, comme PC12, PC9, ou PC8. Par exemple, pour l’individu [27], la contribution sur PC10PC10 est très marquée avec une valeur de 3.21, ce qui explique une part significative de la variance associée à cette composante.
-La somme des contributions totales confirme que tous les individus participent de manière significative à la construction des composantes principales, car aucun individu ne tombe en dessous du seuil théorique de contribution (1/n​, où n est le nombre d'individus).
+Les cos² indiquent la qualité de la représentation des variables sur le premier plan factoriel (PC1-PC2). Plus le cos² est élevé, meilleure est la représentation de la variable sur ce plan. Les variables les mieux représentées incluent Minimum.wage, GDP.per.capita, et Youth.population, avec des cos² respectifs de 0.23, 0.21 et 0.16. Ces variables jouent donc un rôle clé dans la structuration de ce plan factoriel.
 
-Dans ce cas, aucun individu n’a une contribution faible, ce qui signifie qu’il n’est pas nécessaire d’éliminer des individus de l’analyse. Tous participent de manière adéquate à la variance expliquée par les composantes principales.
+En revanche, des variables comme Gender.pay.gap et Early.school.leavers ont des cos² très faibles (0.05 et 0.00), indiquant qu'elles ne sont pas bien représentées sur ce plan. Cela signifie que leur contribution à l'inertie totale du plan PC1-PC2 est limitée, et qu'elles pourraient être mieux représentées sur d'autres plans factoriels.
+
+Ces résultats permettent de se concentrer sur les variables dominantes pour analyser les premières composantes principales et comprendre leur impact sur la structuration des individus et des variables.
+
+
 
 ```{r, fig.width=10, fig.height=7}
  # 11 
@@ -680,13 +722,13 @@ individus_faibles <- names(contributions_totales[contributions_totales < seuil])
 cat("\nIndividus ayant une contribution faible (en dessous du seuil) :\n")
 print(individus_faibles)
 ```
-La projection des individus sur les composantes principales (PC1 et PC2) montre des regroupements qui correspondent globalement aux similarités socio-économiques attendues :
+Les individus [1] et [27] ont des contributions relativement élevées sur certaines composantes principales, comme PC12, PC9, ou PC8. Par exemple, pour l’individu [27], la contribution sur PC10PC10 est très marquée avec une valeur de 3.21, ce qui explique une part significative de la variance associée à cette composante.
+La somme des contributions totales confirme que tous les individus participent de manière significative à la construction des composantes principales, car aucun individu ne tombe en dessous du seuil théorique de contribution (1/n​, où n est le nombre d'individus).
 
- Les pays d'Europe du Nord (Norvège, Islande, Danemark) sont situés dans une région distincte, ce qui reflète des caractéristiques socio-économiques communes comme des niveaux élevés de revenus et de bien-être.
-Les pays d'Europe du Sud (Espagne, Italie, Grèce) apparaissent dans une région différente, marquant des disparités avec les pays du Nord, notamment en termes de chômage ou de performances économiques.
-Les pays d'Europe de l'Est (Bulgarie, Roumanie, Lettonie) se regroupent dans une zone particulière, suggérant des similarités dues à des caractéristiques économiques ou sociales spécifiques.
+Dans ce cas, aucun individu n’a une contribution faible, ce qui signifie qu’il n’est pas nécessaire d’éliminer des individus de l’analyse. Tous participent de manière adéquate à la variance expliquée par les composantes principales.
 
-Cette distribution confirme que les projections sur les composantes principales reflètent bien certaines similarités et différences entre les pays, conformément aux attentes. Cela valide également l'utilité de l'analyse en composantes principales pour interpréter les relations complexes entre les variables et les individus (pays dans ce cas).
+
+
 
 ```{r, fig.width=14, fig.height=10}
 # question 12 12. La projection des individus sur les composantes correspond-elle, d’une manière ou d’une autre, aux similarités
@@ -708,6 +750,15 @@ plot(coord[, 1], coord[, 2],
 # Ajouter les noms des individus
 text(coord[, 1], coord[, 2], labels = rownames(coord), pos = 4, cex = 0.8)
 ```
+La projection des individus sur les composantes principales (PC1 et PC2) montre des regroupements qui correspondent globalement aux similarités socio-économiques attendues :
+
+ Les pays d'Europe du Nord (Norvège, Islande, Danemark) sont situés dans une région distincte, ce qui reflète des caractéristiques socio-économiques communes comme des niveaux élevés de revenus et de bien-être.
+Les pays d'Europe du Sud (Espagne, Italie, Grèce) apparaissent dans une région différente, marquant des disparités avec les pays du Nord, notamment en termes de chômage ou de performances économiques.
+Les pays d'Europe de l'Est (Bulgarie, Roumanie, Lettonie) se regroupent dans une zone particulière, suggérant des similarités dues à des caractéristiques économiques ou sociales spécifiques.
+
+Cette distribution confirme que les projections sur les composantes principales reflètent bien certaines similarités et différences entre les pays, conformément aux attentes. Cela valide également l'utilité de l'analyse en composantes principales pour interpréter les relations complexes entre les variables et les individus (pays dans ce cas).
+
+
 *Conclusion* 
 Cette étude en analyse en composantes principales (ACP) a permis de réduire la dimensionnalité des données tout en conservant l'essentiel de l'information. Les résultats obtenus, tels que les projections des pays sur les composantes principales et l'éboulis des valeurs propres, ont révélé des regroupements significatifs et des similarités attendues entre les pays en fonction de leurs caractéristiques socio-économiques. Ces visualisations offrent une vue claire des relations entre les variables et des différences structurelles entre les pays, facilitant ainsi une interprétation plus approfondie. Cette analyse constitue une base solide pour explorer des méthodes complémentaires, telles que le partitionnement, afin de segmenter davantage les pays en groupes homogènes.
 
