@@ -1,6 +1,6 @@
 ---
 title: "Analyse des données européennes"
-author: "FALL"
+author: "FALL Khadim , "
 date: "`r Sys.Date()`"
 output: 
   pdf_document:
@@ -394,7 +394,7 @@ La matrice V enrichit l’analyse exploratoire initiale en fournissant une quant
 #3
 V_rounded <- round(V, 2)
 heatmap(as.matrix(V_rounded), 
-        main = "Heatmap de la matrice de variance-covariance",
+        main = "Heatmap  variance-covariance",
         Colv = NA, Rowv = NA,  # Désactive le clustering
         scale = "none",  # Pas de normalisation supplémentaire
         col = heat.colors(10),  # Palette de couleurs
@@ -484,6 +484,7 @@ euro_data_replace_na <- apply(euro_data, 2, function(x) ifelse(is.na(x), mean(x,
 
 
 ```{r}
+#5.
 # Calculer les composantes principales
 res <- prcomp(euro_data_replace_na, scale = TRUE, center = TRUE)
 
@@ -627,6 +628,9 @@ Les pays proches sur le graphique ont des caractéristiques comparables. Par exe
 Ce biplot facilite l’analyse des similarités et divergences entre les pays et met en évidence les variables expliquant ces différences. Il constitue ainsi un outil essentiel pour interpréter les relations complexes au sein des données multidimensionnelles.
 
 
+Bien que le plan formé par les composantes principales PC1 et PC2 capture la majeure partie de la variance des données, il ne représente pas nécessairement toutes les informations de manière optimale pour chaque variable ou individu. En effet, certaines variables ou certains pays pourraient être mieux expliqués dans d’autres plans factoriels. Il est donc pertinent d’explorer des plans complémentaires, tels que PC2 vs PC3, pour obtenir une vision plus exhaustive et détaillée des relations entre les variables et les pays.
+
+
 ```{r, fig.width=8, fig.height=10}
 #  9 
 # Plan PC2 vs PC3
@@ -634,29 +638,39 @@ biplot(res, choices = c(2, 3), scale = 0,
        main = "Biplot des projections des pays et des variables (PC2 vs PC3)",
        cex = 0.8,  
        col = c("blue", "red"))  
-# Plan PC3 vs PC4
-biplot(res, choices = c(3, 4), scale = 0, 
-       main = "Biplot des projections des pays et des variables (PC3 vs PC4)",
-       cex = 0.8,  # Taille des points et flèches
-       col = c("blue", "red"))  
+
 ```
-"Bien que le plan formé par les composantes principales PC1 et PC2 capture la majeure partie de la variance des données, il ne représente pas nécessairement toutes les informations de manière optimale pour chaque variable ou individu. En effet, certaines variables ou certains pays pourraient être mieux expliqués dans d’autres plans factoriels. Il est donc pertinent d’explorer des plans complémentaires, tels que PC2 vs PC3, pour obtenir une vision plus exhaustive et détaillée des relations entre les variables et les pays."
+
+
 Le biplot montre simultanément les projections des pays et des variables dans le plan formé par les composantes principales PC2 et PC3. Ce plan permet d’explorer des informations supplémentaires qui n’étaient pas totalement visibles dans le premier plan (PC1 vs PC2).
 
 Les variables représentées par les flèches rouges indiquent leur contribution au plan PC2 vs PC3. On remarque que certaines variables, comme Renewable Energy et Youth Population, ont une forte contribution dans la direction de PC3. De même, des variables comme Gender Pay Gap et Inflation Rate influencent davantage le PC2.
 
 Du côté des pays (points bleus numérotés), on observe que :
 
-    Les pays 28 (Norvège) et 29 (Islande) se distinguent encore une fois dans la direction de Renewable Energy, reflétant leur forte proportion d’énergie renouvelable dans la consommation totale.
-    Les pays 21 (Belgique) et 13 (Irlande) sont projetés dans la direction de Inflation Rate et Gender Pay Gap, indiquant des caractéristiques liées à ces indicateurs économiques.
-    Les pays 11 (Grèce) et 15 (Espagne) se situent à l’extrémité inférieure de PC3, traduisant des particularités liées à des variables comme Electricity Prices et First Time Asylum Applicants.
-
-Le plan PC2 vs PC3 révèle donc des regroupements et des oppositions supplémentaires entre les pays, qui étaient moins visibles dans le plan précédent. Ce type d’analyse permet de compléter la compréhension des relations complexes entre les variables et les pays européens.
+Les pays 28 (Norvège) et 29 (Islande) se distinguent encore une fois dans la direction de Renewable Energy, reflétant leur forte proportion d’énergie renouvelable dans la consommation totale.
+ Les pays 21 (Belgique) et 13 (Irlande) sont projetés dans la direction de Inflation Rate et Gender Pay Gap, indiquant des caractéristiques liées à ces indicateurs économiques.
 
 
 
 
-Sur le second plan (PC3 vs PC4), Energy.imports.dependency et Renewable.energy montrent une forte influence, indiquant des relations marquées entre la dépendance énergétique et les efforts en énergies renouvelables. Population et First.time.asylum.applicants se projettent dans des directions opposées, soulignant des contrastes importants. Le pays 11 sort particulièrement du lot sur l'axe PC3, tandis que les autres se regroupent davantage autour du centre.
+```{r, fig.width=8, fig.height=10}
+# 9.
+# Plan PC3 vs PC4
+biplot(res, choices = c(3, 4), scale = 0, 
+       main = "Biplot des projections des pays et des variables (PC3 vs PC4)",
+       cex = 0.8,  # Taille des points et flèches
+       col = c("blue", "red"))  
+```
+Sur le second plan factoriel (PC3 vs PC4), certaines variables se distinguent par leur forte influence. On observe notamment que Energy.imports.dependency et Renewable.energy présentent des projections marquées dans des directions opposées. Cela traduit une relation inverse entre ces deux variables : les pays ayant une forte dépendance aux importations d’énergie tendent à utiliser moins d’énergies renouvelables, et vice versa.
+
+Les variables Population et First.time.asylum.applicants se projettent dans des directions similaires, indiquant une corrélation positive. Cela peut refléter une tendance selon laquelle les pays ayant une population élevée reçoivent davantage de premières demandes d’asile. De même, Youth.unemployment.rate et Unemployment.rate influencent fortement la composante PC4, montrant leur importance dans la différenciation des pays selon ce critère.
+
+Au niveau des pays, on note que le pays 11 se distingue nettement sur l’axe PC3 par son éloignement des autres, ce qui indique des caractéristiques uniques par rapport aux autres nations. Les pays 29 et 27 se projettent positivement sur PC4, suggérant qu’ils se démarquent par des valeurs élevées des variables associées à cet axe, telles que Youth.unemployment.rate et Unemployment.rate. À l’inverse, le pays 6 se trouve à l’extrémité opposée, traduisant des spécificités inverses.
+
+
+Le plan PC2 vs PC3  et PC3 vs PC4 consolident et révellent  des informations suplémentaires  entre les pays, qui étaient moins visibles dans le plan précédent. Ce type d’analyse permet de compléter la compréhension des relations complexes entre les variables et les pays européens.
+
 
 Ces analyses mettent en lumière les relations complexes entre variables et pays, permettant de mieux comprendre les dynamiques sous-jacentes tout en identifiant les facteurs qui différencient certains pays.
 
@@ -664,13 +678,7 @@ Ces analyses mettent en lumière les relations complexes entre variables et pays
 
 
 
-
-
-
-
-
 ```{r, fig.width=8, fig.height=10}
-
 #  10. 
 loadings <- res$rotation
 
@@ -695,44 +703,89 @@ Ces résultats permettent de se concentrer sur les variables dominantes pour ana
 
 
 ```{r, fig.width=10, fig.height=7}
- # 11 
-
 # Étape 1 : Extraire les scores des individus
 scores <- res$x  # Les coordonnées des individus dans le nouvel espace
 
-# Étape 2 : Extraire les variances des composantes principales
-variances <- res$sdev^2  # Valeurs propres
+# Étape 2 : Extraire les variances des composantes principales (valeurs propres)
+variances <- res$sdev^2  # Variances associées à chaque composante principale
 
 # Étape 3 : Calculer les contributions des individus sur chaque composante
 # Contribution = (scores^2) / (variance de la composante)
 contributions <- sweep(scores^2, 2, variances, "/")
 
-# Étape 4 : Résumé des contributions
-cat("Contributions des individus sur chaque composante principale :\n")
-print(round(contributions, 2))  # Contributions arrondies
+# Étape 4 : Ajuster les paramètres pour l'affichage
+options(width = 150)  # Ajuste la largeur pour éviter les retours à la ligne
 
+# Étape 5 : Afficher les contributions des individus sous forme de tableau
+contributions_table <- data.frame(Individu = seq_len(nrow(contributions)),
+                                  round(contributions, 2))  # Arrondir les valeurs pour lisibilité
+
+cat("Contributions des individus sur chaque composante principale :\n")
+print(contributions_table, row.names = FALSE)
+
+```
+L’analyse des contributions des individus aux composantes principales a permis de mettre en évidence plusieurs aspects intéressants. Tout d’abord, les composantes principales les plus importantes, notamment PC1, PC2, PC3 et PC4, capturent la majeure partie de la variance totale des données. Les contributions élevées sur ces composantes montrent les individus qui influencent fortement la structure globale de l’espace factoriel. Par exemple, l’individu 11 se distingue particulièrement sur PC3 (5.35) , PC5 (9.89) et PC15 (3.44), tandis que l' individus  18 se démarque sur PC1 (4.95) et sur PC5 (3.99) de meme que l'individu 19 avec une valeur remarquable sur PC7(11.17) .
+
+L'individu 28 se démarque sur PC3 (3.41) et sur PC10 (3.40).L'individu 25 aussi se démarque sur PC13 (7.63)
+
+Les contributions totales révèlent que certains individus, comme 11, 18 et 28 , participent de manière significative à la variance expliquée sur plusieurs axes, ce qui explique leur rôle important dans l’analyse. D’autres individus, bien que moins marquants sur les composantes principales initiales, se révèlent essentiels sur des axes secondaires. Par exemple, l’individu 23 a une forte contribution sur PC5, et l’individu 19 se distingue clairement sur PC7.
+
+Cette répartition des contributions montre que tous les individus jouent un rôle dans la construction des composantes principales, aucun ne pouvant être considéré comme négligeable. 
+
+Cela signifie qu’il n’est pas nécessaire de retirer des individus de l’analyse, car chacun contribue de manière significative à l’explication de la variance totale. 
+
+Les individus ayant des contributions élevées sur certaines composantes principales indiquent des particularités ou des caractéristiques spécifiques qui les différencient des autres, tandis que ceux ayant une contribution plus homogène sur l’ensemble des composantes montrent une participation équilibrée dans l’analyse.
+
+Cette approche permet de comprendre la manière dont les individus influencent les axes principaux et secondaires. Les axes les plus significatifs (PC1 à PC4) ont permis d’identifier des regroupements et des oppositions majeures, tandis que les axes suivants offrent des informations supplémentaires sur des variations plus subtiles.
+
+Avant de passer à l’ordre des contributions, cette analyse globale offre déjà une vue d’ensemble des rôles joués par chaque individu dans la construction des composantes principales et dans l’explication de la variance totale des données.
+
+```{r, fig.width=10, fig.height=7}
 # Étape 5 : Calcul des contributions totales par individu (somme sur toutes les composantes)
 contributions_totales <- rowSums(contributions)
-cat("\nContributions totales par individu :\n")
-print(round(contributions_totales, 2))
 
-# Étape 6 : Identifier les individus avec des contributions faibles
-seuil <- 1 / nrow(scores)  # Seuil théorique de contribution moyenne
-individus_faibles <- names(contributions_totales[contributions_totales < seuil])
-cat("\nIndividus ayant une contribution faible (en dessous du seuil) :\n")
-print(individus_faibles)
+# Étape 6 : Trier les contributions totales de façon décroissante
+contributions_totales_table <- data.frame(Individu = seq_len(nrow(scores)),
+                                          Contribution_Totale = round(contributions_totales, 2))
+contributions_totales_table <- contributions_totales_table[order(-contributions_totales_table$Contribution_Totale), ]
+
+# Étape 7 : Afficher les contributions totales triées sous forme de tableau
+cat("\nContributions totales par individu (classées par ordre décroissant) :\n")
+print(contributions_totales_table, row.names = FALSE)
+
 ```
-Les individus [1] et [27] ont des contributions relativement élevées sur certaines composantes principales, comme PC12, PC9, ou PC8. Par exemple, pour l’individu [27], la contribution sur PC10PC10 est très marquée avec une valeur de 3.21, ce qui explique une part significative de la variance associée à cette composante.
-La somme des contributions totales confirme que tous les individus participent de manière significative à la construction des composantes principales, car aucun individu ne tombe en dessous du seuil théorique de contribution (1/n​, où n est le nombre d'individus).
 
-Dans ce cas, aucun individu n’a une contribution faible, ce qui signifie qu’il n’est pas nécessaire d’éliminer des individus de l’analyse. Tous participent de manière adéquate à la variance expliquée par les composantes principales.
+
+
+
+```{r, fig.width=10, fig.height=7}
+#11..
+
+seuil <- 1 / nrow(scores) 
+individus_faibles <- contributions_totales_table$Individu[contributions_totales < seuil]
+
+# Étape 8 : Afficher les individus ayant une contribution faible
+if (length(individus_faibles) == 0) {
+  cat("\nAucun individu n'a une contribution faible. Il n'est pas nécessaire d'éliminer des individus.\n")
+} else {
+  cat("\nIndividus ayant une contribution faible (en dessous du seuil) :\n")
+  print(individus_faibles)
+}
+```
+L’analyse globale des contributions montre que les individus 11, 28 et 18 se démarquent par des contributions totales particulièrement élevées, respectivement 25.03 %, 23.55 % et 21.50 %. Cela signifie qu’ils jouent un rôle majeur dans l’explication de la variance globale des données sur l’ensemble des composantes principales.
+
+Les individus 25, 23, 12 et 26 suivent de près, avec des contributions allant de 18.42 % à 19.12 %. Ces valeurs confirment leur importance relative dans l’analyse, même s’ils ne dominent pas autant que les trois premiers. Ces individus influencent fortement plusieurs axes, ce qui renforce leur pertinence dans l’espace factoriel.
+
+En revanche, les individus 1, 7 et 24 affichent les contributions les plus faibles, respectivement 9.50 %, 9.72 % et 9.42 %. Bien que ces valeurs soient les plus basses, elles restent significativement supérieures au seuil minimal de 3.33 %, ce qui confirme que tous les individus participent de manière notable à l’explication de la variance totale.
+
+Cette hiérarchisation des individus permet d’identifier ceux qui contribuent le plus à l’explication des données et ceux dont l’influence est plus modérée. Elle met en lumière les individus clés dans l’interprétation des résultats de l’analyse en composantes principales (ACP) et justifie l’inclusion de tous les individus dans l’étude.
 
 
 
 
 ```{r, fig.width=14, fig.height=10}
-# question 12 12. La projection des individus sur les composantes correspond-elle, d’une manière ou d’une autre, aux similarités
-#attendues 
+# 12 
+
 # Étape 1 : Extraire les scores
 coord <- res$x  # Scores des individus
 
