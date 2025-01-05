@@ -10,6 +10,8 @@ output:
 
 ---
 
+Le code source du projet est disponible sur GitHub :https://github.com/khadimfall2/Analysis.git
+
 Les données analysées dans ce projet concernent différents indicateurs socio-économiques et environnementaux pour un ensemble de pays européens. Ces indicateurs offrent une vision globale de divers aspects comme la démographie, l'économie, l'énergie, l'emploi et l'environnement. Les analyses visent à explorer les structures sous-jacentes et les relations entre ces variables, ainsi qu'à regrouper les pays selon des caractéristiques communes.
 
 
@@ -658,13 +660,9 @@ print(variance_table, row.names = FALSE)
 ```
 
 
-```{r}
-
-```
-
 
 ```{r}
-#7 
+#7.
 variances <- res$sdev^2
 
 # Calculer le pourcentage de variance expliquée
@@ -720,13 +718,13 @@ biplot(res, scale = 0,
        cex = 0.8,  # Taille des points et flèches
        col = c("blue", "red"))
 ```
+Le biplot illustre simultanément les projections des pays, identifiés par des numéros en bleu, et des variables initiales, représentées par des flèches rouges, dans le plan formé par les deux premières composantes principales (PC1 et PC2). Cette représentation permet d’observer les regroupements de pays ayant des profils similaires ainsi que l’influence des variables sur les composantes principales. Les flèches rouges indiquent la direction et l’intensité des variables : plus la flèche est longue, plus la contribution de la variable à la composante principale est importante. On remarque que Renewable.energy, Greenhouse.gas.emissions et Youth.population influencent fortement le PC1, tandis que des variables comme People.at.risk.of.poverty.or.exclusion et Youth.unemployment.rate ont un impact plus prononcé sur le PC2.
 
-
-Le biplot illustre simultanément les projections des pays, identifiés par des numéros en bleu, et des variables initiales, représentées par des flèches rouges, dans le plan formé par les deux premières composantes principales (PC1 et PC2). Cette représentation permet d’observer les regroupements de pays ayant des profils similaires ainsi que l’influence des variables sur les composantes principales. Les flèches rouges indiquent la direction et l’intensité des variables : plus la flèche est longue, plus la contribution de la variable à la composante principale est importante. On remarque que Renewable.energy et Greenhouse.gas.emissions influencent fortement le PC1, tandis que des variables comme People.at.risk.of.poverty.or.exclusion et Youth.unemployment.rate ont un impact plus prononcé sur le PC2.
-
-Les pays proches sur le graphique ont des caractéristiques comparables. Par exemple, la Norvège (29) et l’Islande (28), situées à l’extrémité droite, se démarquent par leurs valeurs élevées de Renewable.energy, reflétant leur forte dépendance aux énergies renouvelables. En revanche, la Grèce (12) et l’Italie (15), situées à l’opposé dans le plan factoriel, présentent des spécificités économiques différentes, probablement liées à un PIB par habitant plus faible ou à un taux de chômage plus élevé. On observe également un regroupement central formé par le Portugal (11), la Slovénie (25), la Suède (27) et Malte (19), suggérant des similitudes dans leurs profils globaux.
+Les pays proches sur le graphique ont des caractéristiques comparables. Par exemple, la Norvège (29) et l’Islande (28), situées à l’extrémité droite, se démarquent par leurs valeurs élevées de Renewable.energy, reflétant leur forte utilisation des énergies renouvelables. En revanche, la Grèce (12) et l’Espagne (26), situées à l’opposé dans le plan factoriel, présentent des spécificités économiques différentes. On observe également un regroupement central formé par la Pologne (21), la Slovénie (25), la Suède (27) et Malte (19), suggérant des similitudes dans leurs profils globaux.
 
 Ce biplot facilite l’analyse des similarités et divergences entre les pays et met en évidence les variables expliquant ces différences. Il constitue ainsi un outil essentiel pour interpréter les relations complexes au sein des données multidimensionnelles.
+
+
 
 
 Bien que le plan formé par les composantes principales PC1 et PC2 capture la majeure partie de la variance des données, il ne représente pas nécessairement toutes les informations de manière optimale pour chaque variable ou individu. En effet, certaines variables ou certains pays pourraient être mieux expliqués dans d’autres plans factoriels. Il est donc pertinent d’explorer des plans complémentaires, tels que PC2 vs PC3, pour obtenir une vision plus exhaustive et détaillée des relations entre les variables et les pays.
@@ -749,8 +747,7 @@ Les variables représentées par les flèches rouges indiquent leur contribution
 
 Du côté des pays (points bleus numérotés), on observe que :
 
-Les pays 28 (Norvège) et 29 (Islande) se distinguent encore une fois dans la direction de Renewable Energy, reflétant leur forte proportion d’énergie renouvelable dans la consommation totale.
- Les pays 21 (Belgique) et 13 (Irlande) sont projetés dans la direction de Inflation Rate et Gender Pay Gap, indiquant des caractéristiques liées à ces indicateurs économiques.
+Les pays 28 (Islande) et 29 (Norvège) se distinguent encore une fois dans la direction de Renewable.energy, reflétant leur forte proportion d’énergie renouvelable dans la consommation totale. Les pays 21 (Pologne) et 13 (Hongrie) sont projetés dans la direction de Inflation.rate et Gender.pay.gap, indiquant des caractéristiques liées à ces indicateurs économiques.
 
 
 
@@ -765,36 +762,49 @@ biplot(res, choices = c(3, 4), scale = 0,
 ```
 Sur le second plan factoriel (PC3 vs PC4), certaines variables se distinguent par leur forte influence. On observe notamment que Energy.imports.dependency et Renewable.energy présentent des projections marquées dans des directions opposées. Cela traduit une relation inverse entre ces deux variables : les pays ayant une forte dépendance aux importations d’énergie tendent à utiliser moins d’énergies renouvelables, et vice versa.
 
-Les variables Population et First.time.asylum.applicants se projettent dans des directions similaires, indiquant une corrélation positive. Cela peut refléter une tendance selon laquelle les pays ayant une population élevée reçoivent davantage de premières demandes d’asile. De même, Youth.unemployment.rate et Unemployment.rate influencent fortement la composante PC4, montrant leur importance dans la différenciation des pays selon ce critère.
-
-Au niveau des pays, on note que le pays 11 se distingue nettement sur l’axe PC3 par son éloignement des autres, ce qui indique des caractéristiques uniques par rapport aux autres nations. Les pays 29 et 27 se projettent positivement sur PC4, suggérant qu’ils se démarquent par des valeurs élevées des variables associées à cet axe, telles que Youth.unemployment.rate et Unemployment.rate. À l’inverse, le pays 6 se trouve à l’extrémité opposée, traduisant des spécificités inverses.
+Les variables Population et First.time.asylum.applicants se projettent dans des directions similaires, indiquant une corrélation . Cela peut refléter une tendance selon laquelle les pays ayant une population élevée reçoivent davantage de premières demandes d’asile. Une relation similaire est observée entre les varibles infliation.rates et Electicité.Prices, indiquant leur compatitibilité à évoluer dans le meme sens.
 
 
-Le plan PC2 vs PC3  et PC3 vs PC4 consolident et révellent  des informations suplémentaires  entre les pays, qui étaient moins visibles dans le plan précédent. Ce type d’analyse permet de compléter la compréhension des relations complexes entre les variables et les pays européens.
 
+Au niveau des pays, on observe que le pays 11 (Allemagne)se distingue nettement sur l’axe PC3, en bas à gauche, par son éloignement des autres. Cela reflète des caractéristiques uniques par rapport aux autres nations. Les pays 29 (Norvège) et 28 (Islande) restent toujours associés à la variable Renewable.energy sur l'axe PC3, ce qui souligne leur forte indépendance énergétique liée à une faible dépendance aux importations d’énergie.
 
-Ces analyses mettent en lumière les relations complexes entre variables et pays, permettant de mieux comprendre les dynamiques sous-jacentes tout en identifiant les facteurs qui différencient certains pays.
+Le plan PC2 vs PC3 et PC3 vs PC4 consolident et révèlent des informations supplémentaires sur les relations entre les pays, qui étaient moins visibles dans le plan précédent. Ce type d’analyse permet ainsi de compléter la compréhension des relations complexes entre les variables et les pays européens.
+
+Ces analyses mettent en lumière les interactions complexes entre les variables et les pays, offrant une meilleure compréhension des dynamiques sous-jacentes et identifiant les facteurs différenciant certains pays.
 
 
 
 
 
 ```{r, fig.width=8, fig.height=10}
-#  10. 
+#  10. Déterminez quelles sont les variables les mieux représentées par le premier plan factoriel.
+# Étape 1 : Extraire les loadings des composantes principales
 loadings <- res$rotation
 
-# Calculer le cos² pour le plan PC1-PC2
+# Étape 2 : Calculer le cos² pour le plan PC1-PC2
 cos2_PC1_PC2 <- rowSums(loadings[, 1:2]^2)  # Somme des carrés des charges sur PC1 et PC2
 
-# Afficher les cos²
-cat("Cos² des variables sur le plan PC1-PC2 :\n")
-print(round(cos2_PC1_PC2, 2))
+# Étape 3 : Créer une table avec les cos² et les variables associées
+cos2_table <- data.frame(
+  Variable = rownames(loadings),          # Noms des variables
+  Cos2_PC1_PC2 = round(cos2_PC1_PC2, 2)   # Valeurs arrondies des cos²
+)
 
-# Identifier les variables les mieux représentées
-best_variables <- names(sort(cos2_PC1_PC2, decreasing = TRUE))
-cat("\nVariables les mieux représentées par PC1-PC2 (par ordre de qualité) :\n")
-print(best_variables)
+# Étape 4 : Vérifier que la colonne Cos2_PC1_PC2 est bien un vecteur numérique
+cos2_table$Cos2_PC1_PC2 <- as.numeric(cos2_table$Cos2_PC1_PC2)
+
+# Étape 5 : Trier les variables par ordre décroissant de cos²
+cos2_table <- cos2_table[order(cos2_table$Cos2_PC1_PC2, decreasing = TRUE), ]
+
+# Étape 6 : Afficher la table triée
+cat("Cos² des variables sur le plan PC1-PC2 (par ordre de qualité) :\n")
+print(cos2_table, row.names = FALSE)
+
+
 ```
+
+
+
 Les cos² indiquent la qualité de la représentation des variables sur le premier plan factoriel (PC1-PC2). Plus le cos² est élevé, meilleure est la représentation de la variable sur ce plan. Les variables les mieux représentées incluent Minimum.wage, GDP.per.capita, et Youth.population, avec des cos² respectifs de 0.23, 0.21 et 0.16. Ces variables jouent donc un rôle clé dans la structuration de ce plan factoriel.
 
 En revanche, des variables comme Gender.pay.gap et Early.school.leavers ont des cos² très faibles (0.05 et 0.00), indiquant qu'elles ne sont pas bien représentées sur ce plan. Cela signifie que leur contribution à l'inertie totale du plan PC1-PC2 est limitée, et qu'elles pourraient être mieux représentées sur d'autres plans factoriels.
@@ -804,7 +814,7 @@ Ces résultats permettent de se concentrer sur les variables dominantes pour ana
 
 
 ```{r, fig.width=10, fig.height=7}
-# 1010 
+# 11
 # Étape 1 : Extraire les scores des individus
 scores <- res$x  # Les coordonnées des individus dans le nouvel espace
 
