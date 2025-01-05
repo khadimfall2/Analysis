@@ -328,8 +328,7 @@ La médiane est située dans le quart supérieur de la boîte, ce qui signifie q
 
 Pour apporter davantage de visibilité , nous allons remplacer les noms des variables des colonnes par des valeurs numériques, en nous référant à la légende suivante.
 
-Légende des colonnes :  
-
+Légende des colonnes :  
 
 [1]: Population  
 [2]: Youth.population  
@@ -347,6 +346,7 @@ Légende des colonnes :
 [14]: Renewable.energy  
 [15]: Electricity.prices  
 [16]: Energy.imports.dependency
+
 
 
 
@@ -416,6 +416,48 @@ Bien que cette matrice de variance-covariance fournisse des informations limité
 
 
 
+
+
+```{r}
+# Étape 1 : Calculer la matrice de corrélation
+correlation_matrix <- cor(euro_data, use = "complete.obs")
+
+# Étape 2 : Arrondir les valeurs à deux décimales pour une meilleure lisibilité
+correlation_matrix_rounded <- round(correlation_matrix, 2)
+
+# Étape 3 : Ajouter des indices numériques pour les colonnes et les lignes
+colnames(correlation_matrix_rounded) <- paste0("[", seq_len(ncol(correlation_matrix_rounded)), "]")
+rownames(correlation_matrix_rounded) <- paste0("[", seq_len(nrow(correlation_matrix_rounded)), "]")
+
+# Étape 4 : Ajuster les paramètres pour l'affichage
+options(width = 180)  # Ajuste la largeur pour afficher toutes les colonnes sans retour à la ligne
+cat("Matrice de corrélation (indices pour les lignes et colonnes) :\n")
+
+# Étape 5 : Afficher la matrice sous forme de tableau compact
+print(correlation_matrix_rounded, row.names = TRUE, right = FALSE)
+
+
+
+
+```
+Légende des colonnes :  
+
+[1]: Population  
+[2]: Youth.population  
+[3]: First.time.asylum.applicants  
+[4]: Gender.pay.gap  
+[5]: Minimum.wage  
+[6]: People.at.risk.of.poverty.or.exclusion  
+[7]: Early.school.leavers  
+[8]: Inflation.rate  
+[9]: Unemployment.rate  
+[10]: Youth.unemployment.rate  
+[11]: GDP.per.capita  
+[12]: Government.gross.debt  
+[13]: Greenhouse.gas.emissions  
+[14]: Renewable.energy  
+[15]: Electricity.prices  
+[16]: Energy.imports.dependency
 
 
 ```{r}
@@ -703,6 +745,7 @@ Ces résultats permettent de se concentrer sur les variables dominantes pour ana
 
 
 ```{r, fig.width=10, fig.height=7}
+# 1010 
 # Étape 1 : Extraire les scores des individus
 scores <- res$x  # Les coordonnées des individus dans le nouvel espace
 
@@ -724,21 +767,22 @@ cat("Contributions des individus sur chaque composante principale :\n")
 print(contributions_table, row.names = FALSE)
 
 ```
-L’analyse des contributions des individus aux composantes principales a permis de mettre en évidence plusieurs aspects intéressants. Tout d’abord, les composantes principales les plus importantes, notamment PC1, PC2, PC3 et PC4, capturent la majeure partie de la variance totale des données. Les contributions élevées sur ces composantes montrent les individus qui influencent fortement la structure globale de l’espace factoriel. Par exemple, l’individu 11 se distingue particulièrement sur PC3 (5.35) , PC5 (9.89) et PC15 (3.44), tandis que l' individus  18 se démarque sur PC1 (4.95) et sur PC5 (3.99) de meme que l'individu 19 avec une valeur remarquable sur PC7(11.17) .
+L’analyse des contributions des individus aux composantes principales a permis de mettre en évidence plusieurs aspects intéressants. Tout d’abord, les composantes principales les plus importantes, notamment PC1, PC2, PC3 et PC4, capturent la majeure partie de la variance totale des données. Les contributions élevées sur ces composantes montrent les individus qui influencent fortement la structure globale de l’espace factoriel. Par exemple, l’individu 11 (Allemagne) se distingue particulièrement sur PC3 (5.35), PC5 (9.89) et PC15 (3.44), tandis que l'individu 18 (Luxembourg) se démarque sur PC1 (4.95) et sur PC5 (3.99) de même que l'individu 19 (Malte) avec une valeur remarquable sur PC7 (11.17).
 
-L'individu 28 se démarque sur PC3 (3.41) et sur PC10 (3.40).L'individu 25 aussi se démarque sur PC13 (7.63)
+L'individu 28 (Islande) se démarque sur PC3 (3.41) et sur PC10 (3.40). L'individu 25 (Slovénie) aussi se démarque sur PC13 (7.63).
 
-Les contributions totales révèlent que certains individus, comme 11, 18 et 28 , participent de manière significative à la variance expliquée sur plusieurs axes, ce qui explique leur rôle important dans l’analyse. D’autres individus, bien que moins marquants sur les composantes principales initiales, se révèlent essentiels sur des axes secondaires. Par exemple, l’individu 23 a une forte contribution sur PC5, et l’individu 19 se distingue clairement sur PC7.
+Les contributions totales révèlent que certains individus, comme 11 (Allemagne), 18 (Luxembourg) et 28 (Islande), participent de manière significative à la variance expliquée sur plusieurs axes, ce qui explique leur rôle important dans l’analyse. D’autres individus, bien que moins marquants sur les composantes principales initiales, se révèlent essentiels sur des axes secondaires. Par exemple, l’individu 23 (Roumanie) a une forte contribution sur PC5, et l’individu 19 (Malte) se distingue clairement sur PC7.
 
-Cette répartition des contributions montre que tous les individus jouent un rôle dans la construction des composantes principales, aucun ne pouvant être considéré comme négligeable. 
+Cette répartition des contributions montre que tous les individus jouent un rôle dans la construction des composantes principales, aucun ne pouvant être considéré comme négligeable.
 
-Cela signifie qu’il n’est pas nécessaire de retirer des individus de l’analyse, car chacun contribue de manière significative à l’explication de la variance totale. 
+Cela signifie qu’il n’est pas nécessaire de retirer des individus de l’analyse, car chacun contribue de manière significative à l’explication de la variance totale.
 
 Les individus ayant des contributions élevées sur certaines composantes principales indiquent des particularités ou des caractéristiques spécifiques qui les différencient des autres, tandis que ceux ayant une contribution plus homogène sur l’ensemble des composantes montrent une participation équilibrée dans l’analyse.
 
-Cette approche permet de comprendre la manière dont les individus influencent les axes principaux et secondaires. Les axes les plus significatifs (PC1 à PC4) ont permis d’identifier des regroupements et des oppositions majeures, tandis que les axes suivants offrent des informations supplémentaires sur des variations plus subtiles.
 
 Avant de passer à l’ordre des contributions, cette analyse globale offre déjà une vue d’ensemble des rôles joués par chaque individu dans la construction des composantes principales et dans l’explication de la variance totale des données.
+
+
 
 ```{r, fig.width=10, fig.height=7}
 # Étape 5 : Calcul des contributions totales par individu (somme sur toutes les composantes)
