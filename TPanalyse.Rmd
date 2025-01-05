@@ -330,7 +330,7 @@ Pour apporter davantage de visibilité , nous allons remplacer les noms des vari
 
 Légende des colonnes :  
 
-[1]: Population  
+"[1]: Population  
 [2]: Youth.population  
 [3]: First.time.asylum.applicants  
 [4]: Gender.pay.gap  
@@ -345,41 +345,70 @@ Légende des colonnes :
 [13]: Greenhouse.gas.emissions  
 [14]: Renewable.energy  
 [15]: Electricity.prices  
-[16]: Energy.imports.dependency
+[16]: Energy.imports.dependency"
 
 
 
 
 
 ```{r}
-
-#3
+# Étape 1 : Centrer les données (sans mise à l’échelle)
 euro_data_centered <- scale(euro_data, center = TRUE, scale = FALSE)
 
-
-n <- nrow(euro_data)  
+# Étape 2 : Calculer la matrice de variance-covariance
+n <- nrow(euro_data)
 V <- (t(euro_data_centered) %*% euro_data_centered) / (n - 1)
 
-
+# Étape 3 : Ajouter des indices numériques pour les colonnes et lignes
 colnames(V) <- paste0("[", seq_len(ncol(V)), "]")
-rownames(V) <- colnames(euro_data)  
+rownames(V) <- colnames(euro_data)
 
-
+# Étape 4 : Arrondir les valeurs pour une meilleure lisibilité
 V <- round(V, 4)
 
+# Étape 5 : Ajuster les paramètres d'affichage pour éviter les retours à la ligne
+options(width = 200)
 
-print("Matrice de variance-covariance (indices entre crochets pour les colonnes) :")
+# Étape 6 : Afficher la matrice en quatre parties
+cat("Matrice de variance-covariance (indices entre crochets pour les colonnes) :\n")
 
+cat("\nPartie 1 : Colonnes [1] à [4]\n")
+print(V[, 1:4], row.names = TRUE, right = FALSE)
 
-cat("\nPartie 1 : Colonnes [1] à [9]\n")
-print(V[, 1:9])
+cat("\nPartie 2 : Colonnes [5] à [8]\n")
+print(V[, 5:8], row.names = TRUE, right = FALSE)
 
+cat("\nPartie 3 : Colonnes [9] à [12]\n")
+print(V[, 9:12], row.names = TRUE, right = FALSE)
 
-cat("\nPartie 2 : Colonnes [10] à [16]\n")
-print(V[, 10:16])
-
+cat("\nPartie 4 : Colonnes [13] à [16]\n")
+print(V[, 13:16], row.names = TRUE, right = FALSE)
 
 ```
+
+Légende des colonnes : 
+
+
+"[1]: Population  
+[2]: Youth.population  
+[3]: First.time.asylum.applicants  
+[4]: Gender.pay.gap  
+[5]: Minimum.wage  
+[6]: People.at.risk.of.poverty.or.exclusion  
+[7]: Early.school.leavers  
+[8]: Inflation.rate  
+[9]: Unemployment.rate  
+[10]: Youth.unemployment.rate  
+[11]: GDP.per.capita  
+[12]: Government.gross.debt  
+[13]: Greenhouse.gas.emissions  
+[14]: Renewable.energy  
+[15]: Electricity.prices  
+[16]: Energy.imports.dependency"
+
+
+
+
 La matrice de variance-covariance V calcule la dispersion des variables ainsi que les relations linéaires entre elles. Les valeurs sur la diagonale principale représentent la variance de chaque variable. Par exemple, la variance de Population est très élevée (4.653257e+14), reflétant une grande dispersion entre les pays, comme cela a été observé dans les diagrammes à moustaches. En revanche, la variance de Gender Pay Gap est beaucoup plus faible (25.6190), confirmant l’homogénéité relative notée précédemment, bien qu'elle reste significative.
 
 Une covariance négative entre Renewable Energy et Energy Imports Dependency (−290.3213) reflète une relation inverse plus marquée : les pays avec une part plus élevée d’énergies renouvelables, comme l’Islande et la Norvège, sont généralement moins dépendants des importations d’énergie.
@@ -419,6 +448,13 @@ Bien que cette matrice de variance-covariance fournisse des informations limité
 
 
 ```{r}
+
+```
+
+
+```{r}
+
+# 4 
 # Étape 1 : Calculer la matrice de corrélation
 correlation_matrix <- cor(euro_data, use = "complete.obs")
 
@@ -437,12 +473,11 @@ cat("Matrice de corrélation (indices pour les lignes et colonnes) :\n")
 print(correlation_matrix_rounded, row.names = TRUE, right = FALSE)
 
 
-
-
 ```
-Légende des colonnes :  
+Légende des colonnes : 
 
-[1]: Population  
+
+"[1]: Population  
 [2]: Youth.population  
 [3]: First.time.asylum.applicants  
 [4]: Gender.pay.gap  
@@ -457,26 +492,10 @@ Légende des colonnes :
 [13]: Greenhouse.gas.emissions  
 [14]: Renewable.energy  
 [15]: Electricity.prices  
-[16]: Energy.imports.dependency
+[16]: Energy.imports.dependency"
 
 
-```{r}
-# 4
 
-correlation_matrix <- cor(euro_data, use = "complete.obs")
-
-# Arrondir les valeurs à deux décimales pour une meilleure lisibilité
-correlation_matrix_rounded <- round(correlation_matrix, 2)
-
-# Ajouter des indices numériques pour les colonnes et les lignes
-colnames(correlation_matrix_rounded) <- paste0("[", seq_len(ncol(correlation_matrix_rounded)), "]")
-rownames(correlation_matrix_rounded) <- colnames(correlation_matrix)
-
-# Afficher la matrice avec indices numériques
-print("Matrice de corrélation (indices pour les colonnes) :")
-print(correlation_matrix_rounded)
-
-```
 La matrice de corrélation offre une vision normalisée des relations linéaires entre les variables, avec des coefficients compris entre -1 et 1. Une corrélation positive modérée est observée entre Population et Youth Population (r=0.87), indiquant que les pays avec une population élevée tendent à avoir une proportion importante de jeunes.
 
 Une relation négative significative est également visible entre Renewable Energy et Energy Imports Dependency (r=−0.54), confirmant que les pays intégrant davantage d’énergies renouvelables sont généralement moins dépendants des importations énergétiques.
@@ -526,7 +545,7 @@ euro_data_replace_na <- apply(euro_data, 2, function(x) ifelse(is.na(x), mean(x,
 
 
 ```{r}
-#5.
+# 5.
 # Calculer les composantes principales
 res <- prcomp(euro_data_replace_na, scale = TRUE, center = TRUE)
 
@@ -542,16 +561,23 @@ cat("Normes des vecteurs propres (1 attendu) :\n")
 norms <- apply(res$rotation, 2, function(col) sqrt(sum(col^2)))
 print(round(norms, 2))
 
-# Afficher les premières coordonnées dans la nouvelle base
-cat("Premières coordonnées des observations :\n")
-print(head(res$x, n = 6))
+# Afficher les premières coordonnées dans la nouvelle base (divisé en deux parties)
+cat("\nPremières coordonnées des observations (Colonnes [1] à [8]) :\n")
+print(head(res$x[, 1:8], n = 6))  # Affichage des colonnes 1 à 8
+
+cat("\nPremières coordonnées des observations (Colonnes [9] à [16]) :\n")
+print(head(res$x[, 9:16], n = 6))  # Affichage des colonnes 9 à 16
 
 # Ajouter le biplot au PDF
-biplot(res, scale = 0, main = "Biplot des composantes principales")
-dev.off()
+#biplot(res, scale = 0, main = "Biplot des composantes principales")
 
+# Fermer le fichier PDF
+#dev.off()
 
 ```
+
+
+
 Les composantes principales forment une base orthonormée, ce qui est prouvé numériquement. Le produit scalaire des vecteurs propres (matrice de rotation transposée multipliée par elle-même) donne une matrice diagonale avec des valeurs de 1 sur la diagonale et 0 ailleurs, confirmant leur orthogonalité. Les normes des vecteurs propres, calculées comme la racine carrée de la somme des carrés des coefficients, sont toutes égales à 1, prouvant qu'ils sont normalisés.
 
 Le paramètre center = TRUE recentre chaque variable en soustrayant sa moyenne, garantissant que les composantes principales sont calculées par rapport à un centre des données égal à zéro. Le paramètre scale = TRUE met chaque variable à l'échelle en divisant par son écart type, standardisant ainsi les variables pour qu'elles aient toutes une variance de 1, ce qui est crucial lorsque les variables ont des échelles différentes.
@@ -572,7 +598,7 @@ res <- prcomp(euro_data_replace_na, scale = TRUE, center = TRUE)
 
 ```{r fig.width=10, fig.height=8}
 
-#6 
+#6.
 coord <- res$x
 
 # Étape 3 : Ajouter les noms des pays comme noms de lignes
@@ -598,10 +624,43 @@ Des regroupements centraux sont également visibles, formant un cluster de pays 
 
 Par ailleurs, certains pays se distinguent nettement par leur éloignement des autres :
 
-    La Norvège et l’Islande se démarquent dans la partie supérieure droite, probablement en raison de leur indépendance énergétique et de leur forte part d’énergies renouvelables.
-    À l’opposé, la Grèce, l’Espagne et l’Italie apparaissent isolées dans la partie inférieure gauche, ce qui peut s’expliquer par leurs spécificités économiques ou sociales.
+La Norvège et l’Islande se démarquent dans la partie supérieure droite, probablement en raison de leur indépendance énergétique et de leur forte part d’énergies renouvelables.
+À l’opposé, la Grèce, l’Espagne et l’Italie apparaissent isolées dans la partie inférieure gauche, ce qui peut s’expliquer par leurs spécificités économiques ou sociales.
 
 En somme, ce type de visualisation permet d’identifier rapidement les regroupements et les oppositions entre pays, offrant une base précieuse pour des analyses comparatives plus approfondies.
+
+
+```{r}
+# Étape 1 : Calculer les variances des composantes principales
+variances <- res$sdev^2
+
+# Étape 2 : Calculer le pourcentage de variance expliquée
+pourcentages <- variances / sum(variances) * 100
+
+# Étape 3 : Calculer la variance expliquée cumulée
+cumul <- cumsum(pourcentages)
+
+# Étape 4 : Créer une table avec les informations organisées
+variance_table <- data.frame(
+  Composante = paste0("PC", seq_along(variances)),  # Étiquettes des composantes
+  `Valeur propre` = round(variances, 2),
+  `% Variance expliquée` = round(pourcentages, 2),
+  `% Variance cumulée` = round(cumul, 2)
+)
+
+# Étape 5 : Ajuster les paramètres pour l'affichage
+options(width = 100)  # Largeur de l'affichage
+
+# Étape 6 : Afficher la table sous forme bien formatée
+cat("Table des variances expliquées :\n")
+print(variance_table, row.names = FALSE)
+
+```
+
+
+```{r}
+
+```
 
 
 ```{r}
