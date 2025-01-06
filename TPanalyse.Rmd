@@ -836,21 +836,21 @@ cat("Contributions des individus sur chaque composante principale :\n")
 print(contributions_table, row.names = FALSE)
 
 ```
-L’analyse des contributions des individus aux composantes principales a permis de mettre en évidence plusieurs aspects intéressants. Tout d’abord, les composantes principales les plus importantes, notamment PC1, PC2, PC3 et PC4, capturent la majeure partie de la variance totale des données. Les contributions élevées sur ces composantes montrent les individus qui influencent fortement la structure globale de l’espace factoriel. Par exemple, l’individu 11 (Allemagne) se distingue particulièrement sur PC3 (5.35), PC5 (9.89) et PC15 (3.44), tandis que l'individu 18 (Luxembourg) se démarque sur PC1 (4.95) et sur PC5 (3.99) de même que l'individu 19 (Malte) avec une valeur remarquable sur PC7 (11.17).
+L’analyse des contributions des individus aux composantes principales a permis de mettre en évidence plusieurs aspects intéressants. Tout d’abord, les composantes principales les plus importantes, notamment PC1, PC2, PC3 et PC4, capturent la majeure partie de la variance totale des données. Les contributions élevées sur ces composantes montrent les individus qui influencent fortement la structure globale de l’espace factoriel. Par exemple, l’individu 11 (Allemagne) se distingue particulièrement sur PC3 (5.35), PC5 (9.89) et PC15 (3.44), tandis que l'individu 18 (Luxembourg) se démarque sur PC1 (4.95) et sur PC5 (3.90), de même que l'individu 19 (Malte) avec une valeur remarquable sur PC7 (11.17).
 
-L'individu 28 (Islande) se démarque sur PC3 (3.41) et sur PC10 (3.40). L'individu 25 (Slovénie) aussi se démarque sur PC13 (7.63).
+L'individu 28 (Islande) se démarque sur PC3 (3.41) et sur PC10 (3.40). L'individu 25 (Slovénie) se distingue également sur PC13 (7.63).
 
-Les contributions totales révèlent que certains individus, comme 11 (Allemagne), 18 (Luxembourg) et 28 (Islande), participent de manière significative à la variance expliquée sur plusieurs axes, ce qui explique leur rôle important dans l’analyse. D’autres individus, bien que moins marquants sur les composantes principales initiales, se révèlent essentiels sur des axes secondaires. Par exemple, l’individu 23 (Roumanie) a une forte contribution sur PC5, et l’individu 19 (Malte) se distingue clairement sur PC7.
+Les contributions totales révèlent que certains individus, comme 11 (Allemagne), 18 (Luxembourg) et 28 (Islande), participent de manière significative à la variance expliquée sur plusieurs axes, ce qui explique leur rôle important dans l’analyse. D’autres individus, bien que moins marquants sur les composantes principales initiales, se révèlent essentiels sur des axes secondaires. Par exemple, l’individu 23 (Roumanie) a une forte contribution sur PC5, et l’individu 19 (Malte) se distingue clairement sur PC7. Ainsi, si PC7 était utilisé dans l'un des plans d'analyse, il serait tout à fait pertinent de refaire cette analyse sans l'individu 19 (Malte), en raison de sa forte contribution (11.17), c'est-à-dire en le supprimant temporairement de l’analyse.
 
-Cette répartition des contributions montre que tous les individus jouent un rôle dans la construction des composantes principales, aucun ne pouvant être considéré comme négligeable.
+La suppression d’un individu dans une analyse en ACP peut se justifier si cet individu a une contribution anormalement élevée sur une ou plusieurs composantes principales, ce qui peut indiquer qu’il exerce une influence disproportionnée sur les résultats globaux (outlier). Cela peut biaiser l’interprétation des axes.
 
-Cela signifie qu’il n’est pas nécessaire de retirer des individus de l’analyse, car chacun contribue de manière significative à l’explication de la variance totale.
+Cette répartition des contributions montre que tous les individus jouent un rôle dans la construction des composantes principales, aucun ne pouvant être considéré comme négligeable ou trop influent sur les axes utilisés dans les plans (PC1, PC2, PC3, PC4).
+
+Cela signifie qu’il n’est pas nécessaire de retirer des individus de l’analyse de manière définitive, car chacun contribue de manière significative à l’explication de la variance totale.
 
 Les individus ayant des contributions élevées sur certaines composantes principales indiquent des particularités ou des caractéristiques spécifiques qui les différencient des autres, tandis que ceux ayant une contribution plus homogène sur l’ensemble des composantes montrent une participation équilibrée dans l’analyse.
 
-
 Avant de passer à l’ordre des contributions, cette analyse globale offre déjà une vue d’ensemble des rôles joués par chaque individu dans la construction des composantes principales et dans l’explication de la variance totale des données.
-
 
 
 ```{r, fig.width=10, fig.height=7}
@@ -879,7 +879,7 @@ individus_faibles <- contributions_totales_table$Individu[contributions_totales 
 
 # Étape 8 : Afficher les individus ayant une contribution faible
 if (length(individus_faibles) == 0) {
-  cat("\nAucun individu n'a une contribution faible. Il n'est pas nécessaire d'éliminer des individus.\n")
+ #  cat("\nAucun individu n'a une contribution faible. Il n'est pas nécessaire d'éliminer des individus.\n")
 } else {
   cat("\nIndividus ayant une contribution faible (en dessous du seuil) :\n")
   print(individus_faibles)
@@ -893,7 +893,9 @@ En revanche, les individus 1, 7 et 24 affichent les contributions les plus faibl
 
 Cette hiérarchisation des individus permet d’identifier ceux qui contribuent le plus à l’explication des données et ceux dont l’influence est plus modérée. Elle met en lumière les individus clés dans l’interprétation des résultats de l’analyse en composantes principales (ACP) et justifie l’inclusion de tous les individus dans l’étude.
 
+La suppression d'un individu reste une décision contextuelle : elle dépend du domaine d’application et de l’objectif de l’analyse.
 
+En définitive, aucun individu ne présente une valeur qui s’éloigne significativement de la moyenne, surtout sur les axes utilisés pour les plans de l’analyse (PC1, PC2, PC3, PC4), d’où le choix de ne supprimer aucun individu.
 
 
 ```{r, fig.width=14, fig.height=10}
@@ -918,15 +920,14 @@ text(coord[, 1], coord[, 2], labels = rownames(coord), pos = 4, cex = 0.8)
 ```
 La projection des individus sur les composantes principales (PC1 et PC2) montre des regroupements qui correspondent globalement aux similarités socio-économiques attendues :
 
- Les pays d'Europe du Nord (Norvège, Islande, Danemark) sont situés dans une région distincte, ce qui reflète des caractéristiques socio-économiques communes comme des niveaux élevés de revenus et de bien-être.
-Les pays d'Europe du Sud (Espagne, Italie, Grèce) apparaissent dans une région différente, marquant des disparités avec les pays du Nord, notamment en termes de chômage ou de performances économiques.
-Les pays d'Europe de l'Est (Bulgarie, Roumanie, Lettonie) se regroupent dans une zone particulière, suggérant des similarités dues à des caractéristiques économiques ou sociales spécifiques.
+ On peut remarquer un regroupement de certains pays du nord, situés en haut à droite, comme l’Islande, la Norvège, le Danemark et l’Irlande, qui contrastent avec des pays du sud comme l’Espagne, l’Italie et la Grèce en bas à gauche. Ces proximités et éloignements, ou encore ces similarités et dissimilarités, s’expliquent du point de vue des variables socio-économiques considérées. Bien qu’il puisse exister une certaine corrélation entre la proximité des pays et leur situation géographique, cette relation n’est pas systématique : on observe, par exemple, la Suisse parmi les pays du nord alors qu’elle ne fait pas partie de cette région. De même, certains pays du nord se rapprochent de pays appartenant à d’autres zones géographiques.
 
-Cette distribution confirme que les projections sur les composantes principales reflètent bien certaines similarités et différences entre les pays, conformément aux attentes. Cela valide également l'utilité de l'analyse en composantes principales pour interpréter les relations complexes entre les variables et les individus (pays dans ce cas).
+Au centre du graphique, on observe un regroupement de pays comme la Pologne, la Suède, Malte et la Slovénie, qui partagent des caractéristiques socio-économiques similaires.
 
+En haut à gauche, on trouve particulièrement des pays de l'Est comme la Bulgarie, la Hongrie et la Roumanie, qui sont diamétralement opposés à des pays tels que l’Allemagne et la Belgique, situés en bas à droite.
 
 *Conclusion* 
-Cette étude en analyse en composantes principales (ACP) a permis de réduire la dimensionnalité des données tout en conservant l'essentiel de l'information. Les résultats obtenus, tels que les projections des pays sur les composantes principales et l'éboulis des valeurs propres, ont révélé des regroupements significatifs et des similarités attendues entre les pays en fonction de leurs caractéristiques socio-économiques. Ces visualisations offrent une vue claire des relations entre les variables et des différences structurelles entre les pays, facilitant ainsi une interprétation plus approfondie. Cette analyse constitue une base solide pour explorer des méthodes complémentaires, telles que le partitionnement, afin de segmenter davantage les pays en groupes homogènes.
+Cette étude en analyse en composantes principales (ACP) a permis de réduire la dimensionnalité des données tout en conservant l'essentiel de l'information. Les résultats obtenus, tels que les projections des pays sur les composantes principales et l'éboulis des valeurs propres, ont révélé des regroupements significatifs et des similarités  entre les pays en fonction de leurs caractéristiques socio-économiques. Ces visualisations offrent une vue claire des relations entre les variables et des différences structurelles entre les pays, facilitant ainsi une interprétation plus approfondie. Cette analyse constitue une base solide pour explorer des méthodes complémentaires, telles que le partitionnement, afin de segmenter davantage les pays en groupes homogènes.
 
 ```{r, fig.width=12, fig.height=10}
 # TP2 ****************
