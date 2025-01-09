@@ -94,6 +94,26 @@ euro_data_normalized <- as.data.frame(lapply(euro_data[, -1], function(x) {
 
 
 ```{r}
+library(gridExtra)
+
+# Lire les données
+euro_data <- read.csv("data/euro.csv", header = TRUE, sep = ";")
+
+# Créer un fichier PDF
+pdf("euro_data.pdf", width = 30, height = 20)
+
+# Afficher le tableau des données dans le PDF
+grid.table(euro_data)
+
+# Fermer le fichier PDF
+dev.off()
+
+```
+
+
+
+
+```{r}
 # Supprimer la première colonne contenant les pays.
 euro_data <- euro_data[, -1]
 
@@ -920,7 +940,7 @@ text(coord[, 1], coord[, 2], labels = rownames(coord), pos = 4, cex = 0.8)
 ```
 La projection des individus sur les composantes principales (PC1 et PC2) montre des regroupements qui correspondent globalement aux similarités socio-économiques attendues :
 
- On peut remarquer un regroupement de certains pays du nord, situés en haut à droite, comme l’Islande, la Norvège, le Danemark et l’Irlande, qui contrastent avec des pays du sud comme l’Espagne, l’Italie et la Grèce en bas à gauche. Ces proximités et éloignements, ou encore ces similarités et dissimilarités, s’expliquent du point de vue des variables socio-économiques considérées. Bien qu’il puisse exister une certaine corrélation entre la proximité des pays et leur situation géographique, cette relation n’est pas systématique : on observe, par exemple, la Suisse parmi les pays du nord alors qu’elle ne fait pas partie de cette région. De même, certains pays du nord se rapprochent de pays appartenant à d’autres zones géographiques.
+ On peut remarquer un regroupement de certains pays du nord, situés en haut à droite, comme l’Islande, la Norvège, le Danemark et l’Irlande, qui contrastent avec des pays du sud comme l’Espagne, l’Italie et la Grèce en bas à gauche. Ces proximités et éloignements, ou encore ces similarités et dissimilarités, s’expliquent du point de vue des variables socio-économiques considérées. Bien qu’il puisse exister une certaine corrélation entre la proximité des pays et leur situation géographique, cette relation n’est pas systématique : on observe, par exemple, la Suisse parmi les pays du nord alors qu’elle ne fait pas partie de cette région. De même, certains pays du nord se rapprochent de pays appartenant à d’autres zones géographiques.C'est la cas de la la Suède  juste au desssus du centre. 
 
 Au centre du graphique, on observe un regroupement de pays comme la Pologne, la Suède, Malte et la Slovénie, qui partagent des caractéristiques socio-économiques similaires.
 
@@ -937,8 +957,11 @@ Cette étude en analyse en composantes principales (ACP) a permis de réduire la
 
 
 
-```{r, fig.width=10, fig.height=10}
-# Question 1  
+
+
+
+```{r}
+# 1  
 
 # Matrice de dissimilarité Euclidienne (non normalisée)
 dissimilarity_euclidean <- as.matrix(dist(euro_data, method = "euclidean"))
@@ -949,15 +972,30 @@ euro_data_normalized <- scale(euro_data)
 # Matrice de dissimilarité Euclidienne (normalisée)
 dissimilarity_reduced <- as.matrix(dist(euro_data_normalized, method = "euclidean"))
 
-# Afficher les matrices
-cat("Matrice de dissimilarité Euclidienne (non normalisée) :\n")
-print(round(dissimilarity_euclidean, 2))
+# Fonction pour afficher une matrice par blocs de colonnes
+afficher_matrice_par_blocs <- function(mat, bloc_size = 10, titre = "Matrice") {
+  n <- ncol(mat)  # Nombre de colonnes total
+  for (start_col in seq(1, n, by = bloc_size)) {
+    end_col <- min(start_col + bloc_size - 1, n)  # Déterminer la fin du bloc
+    cat("\n", titre, "(colonnes", start_col, "à", end_col, "):\n")
+    print(round(mat[, start_col:end_col], 2))
+  }
+}
 
-cat("\nMatrice de dissimilarité Euclidienne (normalisée) :\n")
-print(round(dissimilarity_reduced, 2))
+# Afficher la matrice de dissimilarité Euclidienne non normalisée par blocs de 9 colonnes
+afficher_matrice_par_blocs(dissimilarity_euclidean, bloc_size = 9, 
+                           titre = "Matrice de dissimilarité Euclidienne (non normalisée)")
+
+# Afficher la matrice de dissimilarité Euclidienne normalisée par blocs de 15 colonnes
+afficher_matrice_par_blocs(dissimilarity_reduced, bloc_size = 15, 
+                           titre = "Matrice de dissimilarité Euclidienne (normalisée)")
+
 
 
 ```
+
+
+
 
 
 ```{r, fig.width=14, fig.height=10}
@@ -1188,12 +1226,6 @@ plot(1:max_k, inertie_expliquee, type = "b", pch = 20, col = "blue",
 L'algorithme des k-means, appliqué avec k=4 classes, a permis de regrouper les pays en fonction de leurs similarités sur les variables normalisées. Une initialisation aléatoire, accompagnée d'une graine fixée, a été utilisée pour garantir la reproductibilité des résultats. Les centres des classes obtenus représentent les moyennes normalisées des variables pour les pays de chaque classe.
 
 La courbe d'inertie expliquée montre une amélioration continue lorsque kk augmente, traduisant une meilleure distinction entre les groupes. Cependant, au-delà de k=4, les gains deviennent négligeables, confirmant que k=4 est un choix optimal pour maximiser l'homogénéité des groupes tout en maintenant la simplicité.
-
-Les centres des classes révèlent des différences significatives entre les groupes. Par exemple :
-
-    Classe 1 : Pays avec une population élevée, un salaire minimum important, mais une faible dépendance énergétique.
-    Classe 3 : Pays avec des niveaux plus élevés de gaz à effet de serre et un PIB par habitant supérieur à la moyenne.
-    Classe 4 : Pays caractérisés par des émissions réduites et des prix de l'électricité relativement bas.
 
 L'algorithme k-means se distingue des méthodes hiérarchiques (comme Ward ou le saut minimum) par sa capacité à minimiser directement l'inertie intra-classe. Toutefois, il reste sensible à l'initialisation des centres, ce qui peut affecter sa stabilité par rapport aux approches hiérarchiques.
 
