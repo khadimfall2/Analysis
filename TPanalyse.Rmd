@@ -1165,7 +1165,7 @@ En conclusion, le critère de Ward se révèle particulièrement adapté pour un
 
 ```{r}
 
-# question 5 
+# 5 
 # Vérifier les NA ou NaN dans les données normalisées
 cat("Y a-t-il des NA/NaN dans les données ?\n")
 print(any(is.na(euro_data_normalized)))
@@ -1186,7 +1186,8 @@ print(any(is.na(euro_data_normalized)))
 
 
 ```{r}
-# Suite question 5 
+
+# 5. 
 # Fixer le nombre de classes
 k <- 4
 
@@ -1198,42 +1199,33 @@ kmeans_result <- kmeans(euro_data_normalized, centers = k, nstart = 10)
 cat("Classes affectées par k-means :\n")
 print(kmeans_result$cluster)
 
-cat("\nCentres des classes :\n")
-# print(round(kmeans_result$centers, 2))
-  print(round(kmeans_result$centers, 2), row.names = FALSE)
+cat("\nCentres des classes (affichage par groupes de 4 variables) :\n")
+
+# Affichage par groupes de 4 variables
+print(round(kmeans_result$centers[, 1:4], 2), row.names = FALSE)
+cat("\n")
+print(round(kmeans_result$centers[, 5:8], 2), row.names = FALSE)
+cat("\n")
+print(round(kmeans_result$centers[, 9:12], 2), row.names = FALSE)
+cat("\n")
+print(round(kmeans_result$centers[, 13:16], 2), row.names = FALSE)
 
 cat("\nInertie intra-classe totale :\n")
-print(round(kmeans_result$tot.withinss, 2),row.names = FALSE)
+print(round(kmeans_result$tot.withinss, 2))
 
-```
-
-
-```{r}
-# Initialiser les variables
-max_k <- 10  # Tester jusqu'à 10 classes
-inertie_totale <- sum(scale(euro_data_normalized, center = TRUE, scale = FALSE)^2)
-inertie_intra <- numeric(max_k)
-inertie_expliquee <- numeric(max_k)
-
-# Calculer l'inertie intra-classe pour chaque k
-for (k in 1:max_k) {
-  set.seed(42)  # Graine pour reproductibilité
-  kmeans_result <- kmeans(euro_data_normalized, centers = k, nstart = 10)
-  inertie_intra[k] <- kmeans_result$tot.withinss
-  inertie_expliquee[k] <- 1 - (inertie_intra[k] / inertie_totale)
-}
-
-# Tracer la courbe
-plot(1:max_k, inertie_expliquee, type = "b", pch = 20, col = "blue",
-     xlab = "Nombre de classes (k)", ylab = "Inertie expliquée (%)",
-     main = "Inertie expliquée en fonction du nombre de classes")
 
 ```
 L'algorithme des k-means, appliqué avec k=4 classes, a permis de regrouper les pays en fonction de leurs similarités sur les variables normalisées. Une initialisation aléatoire, accompagnée d'une graine fixée, a été utilisée pour garantir la reproductibilité des résultats. Les centres des classes obtenus représentent les moyennes normalisées des variables pour les pays de chaque classe.
 
-La courbe d'inertie expliquée montre une amélioration continue lorsque kk augmente, traduisant une meilleure distinction entre les groupes. Cependant, au-delà de k=4, les gains deviennent négligeables, confirmant que k=4 est un choix optimal pour maximiser l'homogénéité des groupes tout en maintenant la simplicité.
+La courbe d'inertie expliquée montre une amélioration continue lorsque k augmente, traduisant une meilleure distinction entre les groupes. Cependant, au-delà de k=4, les gains deviennent négligeables, confirmant que k=4 est un choix optimal pour maximiser l'homogénéité des groupes tout en maintenant la simplicité.
 
 L'algorithme k-means se distingue des méthodes hiérarchiques (comme Ward ou le saut minimum) par sa capacité à minimiser directement l'inertie intra-classe. Toutefois, il reste sensible à l'initialisation des centres, ce qui peut affecter sa stabilité par rapport aux approches hiérarchiques.
+
+
+
+```{r}
+
+```
 
 
 
@@ -1268,36 +1260,38 @@ abline(v = optimal_k, col = "red", lty = 2)  # Marquer le coude sur la courbe
 
 
 ```
-Nous avons appliqué l'algorithme des kk-means sur les données normalisées en faisant varier le nombre de classes (kk) de 1 à 10, et nous avons calculé l'inertie expliquée pour chaque valeur de kk.
+Nous avons appliqué l'algorithme des kk-means sur les données normalisées en faisant varier le nombre de classes (k) de 1 à 10, et nous avons calculé l'inertie expliquée pour chaque valeur de k.
 Affichage de l'inertie expliquée :
 
-La courbe ci-dessus montre l'inertie expliquée en fonction du nombre de classes (kk). L'inertie expliquée augmente avec kk, ce qui reflète une meilleure capacité du modèle à regrouper les données. Cependant, les gains d'inertie deviennent de plus en plus faibles à partir d'un certain kk, un phénomène communément appelé "le coude de la courbe".
+La courbe ci-dessus montre l'inertie expliquée en fonction du nombre de classes (k). L'inertie expliquée augmente avec k, ce qui reflète une meilleure capacité du modèle à regrouper les données. Cependant, les gains d'inertie deviennent de plus en plus faibles à partir d'un certain k, un phénomène communément appelé "le coude de la courbe".
 Détection automatique du coude :
 
-Pour identifier le nombre optimal de classes, nous avons utilisé un critère basé sur les variations marginales de l'inertie expliquée (ΔΔ inertie). En comparant les gains d'inertie successive, le "coude" a été détecté pour k=8k=8 (ligne rouge sur le graphique), ce qui correspond à une valeur au-delà de laquelle les gains deviennent négligeables.
+Pour identifier le nombre optimal de classes, nous avons utilisé un critère basé sur les variations marginales de l'inertie expliquée (Δ inertie). En comparant les gains d'inertie successive, le "coude" a été détecté pour k=8k=8 (ligne rouge sur le graphique), ce qui correspond à une valeur au-delà de laquelle les gains deviennent négligeables.
 Justification du critère :
 
-Le critère choisi repose sur l'équilibre entre l'inertie intra-classe et la simplicité du modèle. En augmentant kk, l'inertie intra-classe diminue, mais une valeur trop élevée de kk conduit à des classes moins significatives et moins généralisables. k=8k=8 permet donc de maximiser l'homogénéité des classes tout en maintenant une complexité raisonnable.
+Le critère choisi repose sur l'équilibre entre l'inertie intra-classe et la simplicité du modèle. En augmentant k, l'inertie intra-classe diminue, mais une valeur trop élevée de k conduit à des classes moins significatives et moins généralisables. k=8 permet donc de maximiser l'homogénéité des classes tout en maintenant une complexité raisonnable.
 Comparaison avec d'autres algorithmes :
 
 En comparant ces résultats avec les classifications obtenues par les méthodes hiérarchiques (Ward, saut minimum), nous observons que :
 
-    Les classifications obtenues par kk-means sont différentes car cet algorithme minimise directement l'inertie intra-classe et dépend fortement de l'initialisation des centres.
-    Les méthodes hiérarchiques, comme Ward, sont moins sensibles à l'initialisation mais peuvent produire des groupes légèrement différents en raison de leur approche ascendante.
+  Les classifications obtenues par k-means sont différentes car cet algorithme minimise directement l'inertie intra-classe et dépend fortement de l'initialisation des centres.
+  Les méthodes hiérarchiques, comme Ward, sont moins sensibles à l'initialisation mais peuvent produire des groupes légèrement différents en raison de leur approche ascendante.
 
 Conclusion :
 
-L'algorithme des kk-means avec k=8k=8 est un choix optimal selon notre critère basé sur le coude de la courbe. Cependant, les résultats diffèrent légèrement selon les algorithmes utilisés, en raison des hypothèses et des mécanismes spécifiques à chaque méthode. Cette diversité souligne l'importance de choisir un algorithme adapté au contexte des données et aux objectifs de l'analyse.
+L'algorithme des kk-means avec k=8 est un choix optimal selon notre critère basé sur le coude de la courbe. Cependant, les résultats diffèrent légèrement selon les algorithmes utilisés, en raison des hypothèses et des mécanismes spécifiques à chaque méthode. Cette diversité souligne l'importance de choisir un algorithme adapté au contexte des données et aux objectifs de l'analyse.
 
 ```{r}
 
-#question 7. Effectuez une ACP des données et représentez les classes obtenues par CAH et par centres mobiles dans les plans
-#factoriels retenus afin d’inspecter visuellement la qualité ou la représentation de la classification.
+#7
 res_acp <- prcomp(euro_data_normalized, center = TRUE, scale. = TRUE)
 
-# Résumé de l'ACP pour comprendre les variances expliquées
-cat("Résumé de l'ACP :\n")
-print(summary(res_acp))
+# Résumé de l'ACP par groupes de composantes
+cat("Résumé de l'ACP (PC1 à PC8) :\n")
+print(summary(res_acp)$importance[, 1:8])
+
+cat("\nRésumé de l'ACP (PC9 à PC16) :\n")
+print(summary(res_acp)$importance[, 9:16])
 
 # Étape 2 : Récupérer les résultats de classification
 # Fixer le nombre de classes optimal
@@ -1332,72 +1326,29 @@ par(mfrow = c(1, 1))  # Réinitialiser l'affichage
 ```
 
 
+L’analyse en composantes principales a été réalisée sur les données normalisées afin de réduire la dimensionnalité et de visualiser les classes obtenues dans un plan factoriel. Les deux premières composantes principales (PC1 et PC2) expliquent ensemble environ 44,74 % de la variance totale des données. Cela justifie leur utilisation pour représenter les données dans un plan à deux dimensions.
+
+Les résultats des classifications obtenues par CAH et par k-means ont été projetés sur le plan formé par les deux premières composantes principales. Concernant les classes obtenues par CAH, on observe des regroupements compacts, mais avec un certain chevauchement entre certaines observations. En revanche, les classes obtenues par k-means paraissent plus distinctes et homogènes, ce qui traduit une meilleure minimisation de l’inertie intra-classe.
+
+La classification par k-means optimise directement la compacité des groupes, ce qui est visible dans leur projection. Cependant, elle reste sensible à l’initialisation aléatoire des centres, ce qui peut influencer les résultats. De son côté, la méthode CAH, qui repose sur des fusions hiérarchiques successives, est moins sensible à l’initialisation, mais peut produire des regroupements moins homogènes en raison de sa construction basée uniquement sur les distances entre observations.
+
+En conclusion, les représentations graphiques combinées à l’ACP permettent de comparer visuellement les deux méthodes de classification. Bien que les deux méthodes soient globalement cohérentes, k-means semble offrir de meilleurs résultats en termes d’homogénéité des classes. Cependant, le choix de la méthode dépend des objectifs de l’étude : k-means convient mieux pour obtenir des groupes compacts, tandis que CAH peut être plus adapté lorsqu’une hiérarchie des regroupements est recherchée.
+
+
+
 
 ```{r}
-# Étape 1 : Effectuer l'ACP
-# Effectuer l'ACP sur les données normalisées
-res_acp <- prcomp(euro_data_normalized, center = TRUE, scale. = TRUE)
-
-# Résumé de l'ACP pour comprendre les variances expliquées
-cat("Résumé de l'ACP :\n")
-print(summary(res_acp))
-
-# Étape 2 : Récupérer les classes des deux méthodes
-# Fixer le nombre optimal de classes (par exemple, k = 4)
-k <- 4
-
-# Classes obtenues par CAH
-classes_cah <- cutree(cah_single_reduced, k = k)
-
-# Classes obtenues par k-means
-classes_kmeans <- kmeans_result$cluster
-
-# Étape 3 : Ajouter les classes au tableau des coordonnées de l'ACP
-coord_acp <- data.frame(res_acp$x[, 1:2], Classe_CAH = as.factor(classes_cah), Classe_Kmeans = as.factor(classes_kmeans))
-
-# Étape 4 : Représenter les classes dans le plan factoriel
-par(mfrow = c(1, 2))  # Afficher les deux graphiques côte à côte
-
-# Représentation des classes CAH
-plot(coord_acp$PC1, coord_acp$PC2, 
-     col = coord_acp$Classe_CAH, 
-     pch = 20, 
-     xlab = "PC1", ylab = "PC2",
-     main = "Plan factoriel avec classes CAH")
-
-# Représentation des classes k-means
-plot(coord_acp$PC1, coord_acp$PC2, 
-     col = coord_acp$Classe_Kmeans, 
-     pch = 20, 
-     xlab = "PC1", ylab = "PC2",
-     main = "Plan factoriel avec classes k-means")
-
-par(mfrow = c(1, 1))  # Réinitialiser l'affichage
+# Créer un data frame coord_acp en combinant les coordonnées factorielles et les classes
+coord_acp <- data.frame(PC1 = res_acp$x[, 1], 
+                        PC2 = res_acp$x[, 2], 
+                        Classe_CAH = classes_cah)
 
 ```
-Analyse en composantes principales (ACP) et visualisation des classifications :
-
-    Résumé de l'ACP :
-    L'analyse en composantes principales a été réalisée sur les données normalisées pour réduire la dimensionnalité et visualiser les classes dans un plan factoriel. Les deux premières composantes principales expliquent ensemble 44,74 % de la variance totale des données. Cela justifie leur utilisation pour représenter les données dans un plan bidimensionnel.
-
-    Visualisation des classes :
-    Les résultats des classifications obtenues par CAH et k-means ont été projetés sur le plan factoriel formé par les deux premières composantes principales :
-        Plan factoriel avec classes CAH : La méthode de CAH répartit les observations en regroupements compacts, mais certains chevauchements sont visibles.
-        Plan factoriel avec classes k-means : Les groupes définis par k-means semblent plus homogènes, et la répartition des points est moins chevauchée, ce qui reflète une minimisation directe de l'inertie intra-classe.
-
-    Interprétation des différences :
-        La classification obtenue par k-means optimise directement l'homogénéité des groupes à l'intérieur des classes, ce qui est visible dans leur projection sur le plan factoriel. Cependant, elle est sensible à l'initialisation aléatoire des centres.
-        En revanche, la classification CAH utilise une approche hiérarchique et se base sur des fusions successives. Cela peut entraîner des regroupements moins homogènes dans certains cas, surtout si les distances entre certaines observations sont très similaires.
-
-    Conclusion :
-    L'ACP combinée aux représentations graphiques permet de comparer visuellement les deux méthodes de classification. Bien que les deux méthodes soient cohérentes dans l'ensemble, k-means semble mieux adapté pour maximiser l'homogénéité des classes dans ce contexte. Toutefois, le choix entre ces deux méthodes dépend des objectifs spécifiques de l'étude, comme la stabilité ou la compacité des classes.
-
-
 
 
 ```{r}
-#8
-zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
+zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & 
+                           coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
 
 # Afficher les pays dans la zone restreinte
 cat("Pays dans la zone sélectionnée :\n")
@@ -1411,29 +1362,32 @@ plot(zone_restante$PC1, zone_restante$PC2,
      main = "Zone restreinte avec classes CAH")
 
 # Ajouter les noms des pays
-text(zone_restante$PC1, zone_restante$PC2, labels = rownames(zone_restante), pos = 4, cex = 0.8)
+text(zone_restante$PC1, zone_restante$PC2, 
+     labels = rownames(zone_restante), pos = 4, cex = 0.8)
 
 ```
-En examinant la zone restreinte choisie (où les composantes principales PC1PC1 et PC2PC2 se situent dans un intervalle limité), nous observons les proximités entre certains pays. Ces proximités reflètent les similarités dans les variables normalisées utilisées pour l'analyse.
+
+
+
+En examinant la zone restreinte choisie (où les composantes principales PC1 et PC2 se situent dans un intervalle limité), nous observons les proximités entre certains pays. Ces proximités reflètent les similarités dans les variables normalisées utilisées pour l'analyse.
 
 Les pays identifiés dans cette zone restreinte sont : 1, 9, 19, 21, 25, et 27. Selon les classes issues des deux méthodes de classification (CAH et k-means) :
 
-    Classe CAH : Tous ces pays appartiennent à la même classe (Classe 1), indiquant une homogénéité selon cette méthode de regroupement. Cela suggère que ces pays partagent des caractéristiques communes sur l'ensemble des variables.
+Classe CAH : Tous ces pays appartiennent à la même classe (Classe 1), indiquant une homogénéité selon cette méthode de regroupement. Cela suggère que ces pays partagent des caractéristiques communes sur l'ensemble des variables.
 
-    Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (3, 5, 6, et 7). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
+Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (3, 5, 6, et 7). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
 
 Analyse des proximités
 
 Dans le graphique, on observe que :
 
-    Les pays 25 et 27 sont proches sur le plan factoriel (PC1PC1 et PC2PC2), suggérant une similarité forte entre eux.
-    Les pays 19, 21, et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
-    Le pays 1 est éloigné du reste du groupe, bien qu'il fasse partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
+  Les pays 25 et 27 sont proches sur le plan factoriel (PC1 et PC2), suggérant une similarité forte entre eux.
+  Les pays 19, 21, et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
+  Le pays 1 est éloigné du reste du groupe, bien qu'il fasse partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
 
 Ces observations confirment que les proximités perçues varient selon les méthodes de classification, et la méthodologie utilisée influe sur la répartition des groupes.
 
 En résumé, l'analyse de cette zone restreinte révèle que les similarités entre les pays sont plus cohérentes selon la classification CAH que selon k-means, bien que des proximités notables soient visibles dans les deux approches.
-
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
@@ -1441,11 +1395,12 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 
 *Conclusion*
+
 À travers cette analyse, plusieurs approches de classification ont été appliquées pour regrouper les pays selon leurs similarités sur des variables socio-économiques et environnementales. Chaque méthode, qu'il s'agisse de la Classification Ascendante Hiérarchique (CAH), de k-means, ou de l'Analyse en Composantes Principales (ACP), offre une perspective unique :
 
-    CAH a mis en évidence des regroupements stables et homogènes, particulièrement adaptés pour explorer des hiérarchies naturelles et globales entre les pays.
-    k-means a permis d'optimiser la minimisation de l'inertie intra-classe, fournissant des regroupements plus adaptés à des configurations de données complexes mais sensibles à l'initialisation.
-    ACP a facilité la visualisation des proximités entre les pays dans un espace réduit, tout en révélant les dimensions principales qui expliquent la majorité de la variance des données.
+  CAH a mis en évidence des regroupements stables et homogènes, particulièrement adaptés pour explorer des hiérarchies naturelles et globales entre les pays.
+  k-means a permis d'optimiser la minimisation de l'inertie intra-classe, fournissant des regroupements plus adaptés à des configurations de données complexes mais sensibles à l'initialisation.
+  ACP a facilité la visualisation des proximités entre les pays dans un espace réduit, tout en révélant les dimensions principales qui expliquent la majorité de la variance des données.
 
 Les résultats montrent des similitudes entre les classifications, mais aussi des divergences, notamment dans les regroupements en zones restreintes. Ces divergences soulignent que chaque méthode répond à des objectifs spécifiques et peut conduire à des conclusions différentes selon les critères d’optimisation ou de visualisation choisis.
 
