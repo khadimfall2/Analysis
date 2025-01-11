@@ -1,6 +1,6 @@
 ---
 title: "Analyse des données européennes"
-author: "FALL Khadim , "
+author: "FALL Khadim , CALLET Elliot"
 date: "`r Sys.Date()`"
 output: 
   pdf_document:
@@ -1018,11 +1018,17 @@ plot(cah_single_reduced,
 
 
 ```
-Les dendrogrammes obtenus à partir des matrices de dissimilarité Euclidienne normalisée et non normalisée mettent en évidence des différences dans les regroupements des pays. Avec la matrice normalisée, les échelles des variables sont équilibrées, ce qui permet une contribution équitable de chaque caractéristique aux regroupements. 
+Les dendrogrammes obtenus à partir des matrices de dissimilarité Euclidienne normalisée et non normalisée mettent en évidence des différences dans les regroupements des pays. Avec la matrice normalisée, les échelles des variables sont équilibrées, ce qui permet une contribution équitable de chaque caractéristique aux regroupements.
 
-Cela se traduit par une structure de classification où les similarités relatives entre les pays sont mieux prises en compte. En revanche, la matrice non normalisée amplifie l'influence des variables à grande échelle, ce qui peut biaiser les regroupements et privilégier certaines caractéristiques au détriment d'autres. 
+Cela se traduit par une structure de classification où les similarités relatives entre les pays sont mieux prises en compte. En revanche, la matrice non normalisée amplifie l'influence des variables à grande échelle, ce qui peut biaiser les regroupements en privilégiant certaines caractéristiques au détriment d'autres.
 
-Les fusions à des hauteurs plus élevées dans le dendrogramme non normalisé indiquent des dissimilarités globales plus marquées. Cette comparaison souligne l'importance de la normalisation pour éviter des biais et obtenir des regroupements reflétant plus fidèlement les similarités relatives entre les pays.
+Les fusions à des hauteurs plus élevées dans le dendrogramme non normalisé indiquent des dissimilarités globales plus marquées. Cette comparaison souligne l'importance de la normalisation pour éviter les biais et obtenir des regroupements reflétant plus fidèlement les similarités relatives entre les pays.
+
+Le dendrogramme avec normalisation des données est davantage aligné avec les résultats obtenus lors de l'ACP, notamment sur les plans de projection, car on peut remarquer que les individus 21 (Pologne) et 25 (Slovénie) appartiennent au même cluster, tout comme le regroupement des individus 28 (Islande) et 29 (Norvège), comme observé lors de l’étude sur l’ACP.
+
+En revanche, dans le dendrogramme basé sur les données non normalisées, les individus 28 (Islande) et 29 (Norvège) ne se trouvent pas dans le même cluster, bien que ces deux individus, qui se distinguent, n’aient jamais été éloignés l’un de l’autre dans l’ensemble des plans de l’ACP.
+
+
 
 ```{r}
 # Question 2 
@@ -1044,18 +1050,19 @@ plot(1:length(heights_reduced), heights_reduced,
      type = "b", col = "red", pch = 20,
      xlab = "Nombre de classes", 
      ylab = "Hauteur", 
-     main = "Hauteur en fonction du nombre de classes (Euclidienne, normalisée)")
+     main = "Hauteur en fonction du nombre classes (Euclidienne,normalisée)")
 
 
 ```
-Les deux graphiques montrent la relation entre le nombre de classes et la hauteur des fusions dans le dendrogramme pour des matrices de dissimilarité euclidiennes, normalisées et non normalisées.
+Les deux graphiques montrent la relation entre le nombre de classes et la hauteur des fusions dans le dendrogramme pour des matrices de dissimilarité euclidiennes, normalisées et non normalisées. La hauteur correspond à la dissimilarité entre les clusters au moment de leur fusion.
 
- Représentation des dendrogrammes et des hauteurs : Les dendrogrammes illustrent les regroupements hiérarchiques des observations en fonction des dissimilarités. La hauteur des branches représente la distance ou la dissimilarité entre les clusters fusionnés. Plus la hauteur est élevée, plus les groupes fusionnés sont dissemblables.
+Dans le cas de la matrice normalisée, les contributions des différentes variables sont équilibrées, ce qui permet d’obtenir des regroupements plus représentatifs de la structure globale des données. En revanche, avec la matrice non normalisée, certaines variables peuvent dominer les regroupements en raison de leurs échelles différentes, ce qui peut biaiser l’interprétation.
 
-Interprétation de la hauteur : La hauteur dans ces graphiques correspond à la dissimilarité mesurée entre les clusters au moment de leur fusion. Dans le cas de la matrice normalisée, les contributions des différentes variables sont équilibrées, tandis que pour la matrice non normalisée, certaines variables peuvent dominer les regroupements en raison de leurs échelles.
+Découpage du dendrogramme :
+Le point de découpe optimal dépend du contexte de l’analyse, mais il est souvent déterminé en identifiant une hauteur au-delà de laquelle les fusions deviennent moins significatives (c’est-à-dire lorsqu’un "saut" important dans la hauteur des fusions est observé).
 
-Découpage du dendrogramme : Le point de découpe optimal dépend du contexte de l’analyse, mais il est souvent déterminé en identifiant une hauteur au-delà de laquelle les fusions sont moins significatives (par exemple, un "saut" important dans la hauteur des fusions). Pour le dendrogramme basé sur la matrice normalisée, un découpage à environ 3 ou 4 clusters pourrait être justifié, car les différences de hauteur sont notables à ces niveaux. Pour le dendrogramme non normalisé, un découpage similaire pourrait être envisagé, mais avec prudence, car les fusions pourraient être influencées par des variables dominantes.
-
+  Pour le dendrogramme basé sur la matrice normalisée, un découpage à environ 3 ou 4 clusters pourrait être justifié, car les différences de hauteur sont notables à ces niveaux.
+  Pour le dendrogramme non normalisé, un découpage similaire peut être envisagé, mais avec prudence, car les fusions pourraient être influencées par des variables dominantes.
 
 
 
@@ -1104,18 +1111,17 @@ print(head(euro_data_with_classes))
 
 
 ```
-Les résultats montrent que les classes regroupent des pays présentant des caractéristiques similaires en termes de population, développement économique, et stabilité sociale. Les pays de la classe 3, par exemple, représentent les économies les plus développées et homogènes, tandis que la classe 2 contient des pays présentant des défis économiques significatifs et une grande variabilité interne.
+Les résultats montrent que les classes regroupent des pays présentant des caractéristiques similaires en termes de démographie, développement économique, et gestion des ressources. Par exemple :
 
-Ce découpage met également en évidence l’importance des variables économiques et environnementales dans le regroupement des pays, avec des indicateurs comme le PIB par habitant, les émissions de gaz à effet de serre, et les prix de l’électricité jouant un rôle clé dans la différenciation des groupes. Cela reflète des similarités et des divergences dans le développement économique et la gestion des ressources entre les pays européens.
-Exemple de résultats :
+Classe 3 : Cette classe se distingue par des valeurs homogènes et élevées en termes de PIB par habitant et de développement économique, représentant ainsi des économies stables et avancées.
 
-    Classe 1 : Population = 6 757 781, Gaz à effet de serre = 8,37 T/h, Inflation = 7,26 %.
-    Classe 2 : Population = 5 841 513, Gaz à effet de serre = 6,53 T/h, Inflation = 5,00 %.
-    Classe 3 : Population = 8 435 884, Gaz à effet de serre = 9,30 T/h, Inflation = 6,00 %.
-    Classe 4 : Population = 3 675 373, Gaz à effet de serre = 10,40 T/h, Inflation = 10,90 %.
+Classe 2 : Elle regroupe des pays présentant des défis économiques importants, avec une forte variabilité interne, notamment au niveau des indicateurs sociaux et économiques, comme les taux de chômage et les niveaux de revenu.
 
-En résumé, les centres de gravité offrent une description claire des caractéristiques dominantes de chaque classe, et les inerties intra-classes permettent de mesurer leur homogénéité ou hétérogénéité.
+Les centres de gravité permettent de dégager des profils moyens pour chaque classe, tandis que les inerties intra-classes fournissent une mesure quantitative de leur homogénéité. On remarque que la classe 3 présente une inertie intra-classe nulle, ce qui signifie que les pays regroupés dans cette classe ont des caractéristiques très proches, donc peu de dispersion autour de leur centre de gravité. À l’opposé, la classe 1 montre une inertie intra-classe très élevée, indiquant une grande variabilité entre les pays qui la composent.
 
+Ce découpage met en évidence l’importance des variables économiques et environnementales dans la formation des classes, notamment des indicateurs comme le PIB par habitant, les prix de l’électricité et les émissions de gaz à effet de serre, qui semblent jouer un rôle clé dans la différenciation des groupes.
+
+En résumé, les centres de gravité offrent une description claire des caractéristiques dominantes de chaque classe, et les inerties intra-classes permettent de mesurer leur homogénéité. Cette classification met ainsi en relief les disparités socio-économiques et environnementales entre les pays européens.
 
 
 
