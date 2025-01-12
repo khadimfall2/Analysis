@@ -1311,14 +1311,14 @@ plot(res_acp$x[, 1], res_acp$x[, 2],
      col = classes_cah, 
      pch = 20, 
      xlab = "PC1", ylab = "PC2",
-     main = "Plan factoriel avec classes CAH")
+     main = "Plan factoriel  classes CAH")
 
 # Représentation des classes k-means
 plot(res_acp$x[, 1], res_acp$x[, 2], 
      col = classes_kmeans, 
      pch = 20, 
      xlab = "PC1", ylab = "PC2",
-     main = "Plan factoriel avec classes k-means")
+     main = "Plan factoriel  classes k-means")
 
 par(mfrow = c(1, 1))  # Réinitialiser l'affichage
 
@@ -1326,46 +1326,120 @@ par(mfrow = c(1, 1))  # Réinitialiser l'affichage
 ```
 
 
-L’analyse en composantes principales a été réalisée sur les données normalisées afin de réduire la dimensionnalité et de visualiser les classes obtenues dans un plan factoriel. Les deux premières composantes principales (PC1 et PC2) expliquent ensemble environ 44,74 % de la variance totale des données. Cela justifie leur utilisation pour représenter les données dans un plan à deux dimensions.
-
-Les résultats des classifications obtenues par CAH et par k-means ont été projetés sur le plan formé par les deux premières composantes principales. Concernant les classes obtenues par CAH, on observe des regroupements compacts, mais avec un certain chevauchement entre certaines observations. En revanche, les classes obtenues par k-means paraissent plus distinctes et homogènes, ce qui traduit une meilleure minimisation de l’inertie intra-classe.
-
-La classification par k-means optimise directement la compacité des groupes, ce qui est visible dans leur projection. Cependant, elle reste sensible à l’initialisation aléatoire des centres, ce qui peut influencer les résultats. De son côté, la méthode CAH, qui repose sur des fusions hiérarchiques successives, est moins sensible à l’initialisation, mais peut produire des regroupements moins homogènes en raison de sa construction basée uniquement sur les distances entre observations.
-
-En conclusion, les représentations graphiques combinées à l’ACP permettent de comparer visuellement les deux méthodes de classification. Bien que les deux méthodes soient globalement cohérentes, k-means semble offrir de meilleurs résultats en termes d’homogénéité des classes. Cependant, le choix de la méthode dépend des objectifs de l’étude : k-means convient mieux pour obtenir des groupes compacts, tandis que CAH peut être plus adapté lorsqu’une hiérarchie des regroupements est recherchée.
 
 
 
 
 ```{r}
-# Créer un data frame coord_acp en combinant les coordonnées factorielles et les classes
+library(cluster)
+
+# Calcul de l'indice de silhouette pour CAH
+silhouette_cah <- silhouette(classes_cah, dist(euro_data_normalized))
+cat("Silhouette moyenne pour CAH :", mean(silhouette_cah[, 3]), "\n")
+
+# Calcul de l'indice de silhouette pour k-means
+silhouette_kmeans <- silhouette(classes_kmeans, dist(euro_data_normalized))
+cat("Silhouette moyenne pour k-means :", mean(silhouette_kmeans[, 3]), "\n")
+
+```
+L’analyse en composantes principales a été réalisée sur les données normalisées afin de réduire la dimensionnalité et de visualiser les classes obtenues dans un plan factoriel. Les deux premières composantes principales (PC1 et PC2) expliquent ensemble environ 44,74 % de la variance totale des données. Cela justifie leur utilisation pour représenter les données dans un plan à deux dimensions.
+
+Les résultats des classifications obtenues par CAH et par k-means ont été projetés sur le plan formé par les deux premières composantes principales. Concernant les classes obtenues par CAH, les regroupements semblent compacts visuellement, mais on observe un certain chevauchement entre certaines observations. Les classes obtenues par k-means, quant à elles, paraissent légèrement plus homogènes et distinctes.
+
+Pour objectiver cette observation visuelle, nous avons calculé l’indice de silhouette pour chaque méthode :
+
+    Indice de silhouette moyen pour CAH : 0.122
+    Indice de silhouette moyen pour k-means : 0.139
+
+L’indice de silhouette, qui mesure à la fois la compacité des classes et leur séparation, est légèrement supérieur pour k-means, confirmant que cette méthode offre des regroupements plus cohérents et mieux séparés que CAH dans ce contexte.
+
+La classification par k-means optimise directement la compacité des groupes, ce qui est visible dans leur projection et confirmé par l’indice de silhouette. Cependant, elle reste sensible à l’initialisation aléatoire des centres, ce qui peut influencer les résultats. De son côté, la méthode CAH, qui repose sur des fusions hiérarchiques successives, est moins sensible à l’initialisation, mais peut produire des regroupements légèrement moins homogènes en raison de sa construction basée uniquement sur les distances entre observations.
+
+En conclusion, l’ACP combinée aux représentations graphiques et à l’analyse quantitative permet de comparer les deux méthodes de classification. Bien que les deux méthodes soient globalement cohérentes, k-means semble offrir de meilleurs résultats en termes d’homogénéité et de séparation des classes, comme l’indique l’indice de silhouette. Cependant, le choix de la méthode dépend des objectifs de l’étude : k-means convient mieux pour obtenir des groupes compacts et homogènes, tandis que CAH peut être plus adapté lorsqu’une hiérarchie des regroupements est recherchée.
+
+
+
+
+
+```{r}
+# Étape 1 : Créer un data frame avec les coordonnées factorielles et les classes CAH
 coord_acp <- data.frame(PC1 = res_acp$x[, 1], 
                         PC2 = res_acp$x[, 2], 
                         Classe_CAH = classes_cah)
 
-```
-
-
-```{r}
+# Étape 2 : Sélectionner une zone restreinte (PC1 et PC2 dans l'intervalle [-1, 1])
 zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & 
                            coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
 
-# Afficher les pays dans la zone restreinte
-cat("Pays dans la zone sélectionnée :\n")
+# Étape 3 : Afficher les pays sélectionnés
+cat("Pays dans la zone restreinte :\n")
 print(zone_restante)
 
-# Étape 2 : Représenter graphiquement la zone
+# Étape 4 : Représenter graphiquement la zone restreinte avec les classes CAH
 plot(zone_restante$PC1, zone_restante$PC2, 
      col = zone_restante$Classe_CAH, 
      pch = 20, 
      xlab = "PC1", ylab = "PC2",
      main = "Zone restreinte avec classes CAH")
 
-# Ajouter les noms des pays
+# Ajouter les noms des pays sur le graphique
 text(zone_restante$PC1, zone_restante$PC2, 
      labels = rownames(zone_restante), pos = 4, cex = 0.8)
 
 ```
+
+
+```{r}
+# Étape 1 : Créer le data frame avec les coordonnées factorielles
+coord_acp <- data.frame(PC1 = res_acp$x[, 1], 
+                        PC2 = res_acp$x[, 2], 
+                        Classe_CAH = classes_cah)
+
+# Étape 2 : Sélectionner la zone restreinte
+zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & 
+                           coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
+
+# Étape 3 : Appliquer l’algorithme k-means uniquement sur la zone restreinte
+set.seed(42)  # Fixer la graine pour reproductibilité
+kmeans_zone <- kmeans(zone_restante[, c("PC1", "PC2")], centers = 4, nstart = 10)
+
+# Ajouter les classes k-means obtenues à la zone restreinte
+zone_restante$Classe_kmeans <- kmeans_zone$cluster
+
+# Afficher les pays dans la zone restreinte avec leurs classes
+cat("Pays dans la zone sélectionnée avec classes CAH et k-means :\n")
+print(zone_restante)
+
+# Étape 4 : Représenter graphiquement la zone avec classes CAH
+par(mfrow = c(1, 1))  # Deux graphiques côte à côte
+
+# Graphique avec classes CAH
+plot(zone_restante$PC1, zone_restante$PC2, 
+     col = zone_restante$Classe_CAH, 
+     pch = 20, 
+     xlab = "PC1", ylab = "PC2",
+     main = "Zone restreinte avec classes CAH")
+text(zone_restante$PC1, zone_restante$PC2, 
+     labels = rownames(zone_restante), pos = 4, cex = 0.8)
+
+# Graphique avec classes k-means
+plot(zone_restante$PC1, zone_restante$PC2, 
+     col = zone_restante$Classe_kmeans, 
+     pch = 20, 
+     xlab = "PC1", ylab = "PC2",
+     main = "Zone restreinte avec classes k-means")
+text(zone_restante$PC1, zone_restante$PC2, 
+     labels = rownames(zone_restante), pos = 4, cex = 0.8)
+
+#par(mfrow = c(1, 1))  # Réinitialiser l’affichage
+
+```
+
+
+
+
+
+
 
 
 
@@ -1375,21 +1449,20 @@ Les pays identifiés dans cette zone restreinte sont : 1, 9, 19, 21, 25, et 27. 
 
 Classe CAH : Tous ces pays appartiennent à la même classe (Classe 1), indiquant une homogénéité selon cette méthode de regroupement. Cela suggère que ces pays partagent des caractéristiques communes sur l'ensemble des variables.
 
-Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (3, 5, 6, et 7). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
+Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (1, 2, 3, et  4 ). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
 
 Analyse des proximités
 
 Dans le graphique, on observe que :
 
-  Les pays 25 et 27 sont proches sur le plan factoriel (PC1 et PC2), suggérant une similarité forte entre eux.
-  Les pays 19, 21, et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
-  Le pays 1 est éloigné du reste du groupe, bien qu'il fasse partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
+  Les pays 21 et 27 sont proches sur le plan factoriel (PC1 et PC2), suggérant une similarité forte entre eux.
+  Les pays 19, 21, 27  et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
+  Les pays 1 et 9  sont  éloignés du reste du groupe, bien qu'ils fassent  partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
 
 Ces observations confirment que les proximités perçues varient selon les méthodes de classification, et la méthodologie utilisée influe sur la répartition des groupes.
 
 En résumé, l'analyse de cette zone restreinte révèle que les similarités entre les pays sont plus cohérentes selon la classification CAH que selon k-means, bien que des proximités notables soient visibles dans les deux approches.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
 
