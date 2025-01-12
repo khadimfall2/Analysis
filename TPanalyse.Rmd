@@ -145,7 +145,7 @@ for (col_name in selected_columns) {
 ```
 La distribution de la variable Population montre une grande variabilité entre les pays européens. Certains pays, comme l’Allemagne (84,3 millions), la France (68,1 millions) et l’Italie (58,9 millions), présentent des populations nettement supérieures à la majorité. Ces valeurs extrêmes contrastent avec des pays de petite taille comme Malte (0,54 million) et Chypre (0,92 million). La médiane, bien centrée dans la boîte du boxplot, reflète une répartition relativement équilibrée dans l’intervalle interquartile, bien que la présence de valeurs aberrantes, telles que celles de l’Allemagne et de la France, étende la distribution vers des valeurs élevées.
 
-Quant à la variable Youth Population (pourcentage de jeunes âgés de 15 à 29 ans), elle présente une répartition beaucoup plus homogène. Les pourcentages varient de 13,2 % (Bulgarie) à 21,0 % (Islande), sans aucune valeur aberrante. Cependant, la médiane est située dans le quart inférieur de la boîte du boxplot, ce qui indique que les proportions de jeunes pour la majorité des pays se concentrent légèrement au-dessus de la médiane. On observe que les pays nordiques, comme l’Islande (21,0 %) et la Norvège (18,7 %), possèdent des proportions relativement élevées de jeunes, tandis que des pays comme la Bulgarie se situent à l’extrémité inférieure de cette répartition.
+Quant à la variable Youth Population (pourcentage de jeunes âgés de 15 à 29 ans), elle présente une répartition beaucoup plus homogène. Les pourcentages varient de 13,2 % (Bulgarie) à 21,0 % (Islande), sans aucune valeur aberrante. Cependant, la médiane est située dans le quart inférieur de la boîte du boxplot. On observe que les pays nordiques, comme l’Islande (21,0 %) et la Norvège (18,7 %), possèdent des proportions relativement élevées de jeunes, tandis que des pays comme la Bulgarie se situent à l’extrémité inférieure de cette répartition.
 
 
 ```{r}
@@ -171,10 +171,9 @@ for (col_name in selected_columns) {
 
 
 ```
-La distribution de la variable First Time Asylum Applicants (premières demandes d’asile) montre une forte asymétrie, avec plusieurs valeurs extrêmes très élevées. Ces valeurs, représentées par des points au-dessus des moustaches, indiquent que quelques pays reçoivent un nombre disproportionné de premières demandes d’asile par rapport à la majorité. La médiane basse reflète que la moitié des pays ont un faible nombre de demandes d’asile, tandis que les valeurs élevées sont concentrées dans un petit nombre de pays, ce qui étend la moustache supérieure.
+La distribution de la variable First Time Asylum Applicants (premières demandes d’asile) montre une forte asymétrie, avec plusieurs valeurs extrêmes très élevées. Ces valeurs, représentées par des points au-dessus des moustaches, indiquent que quelques pays reçoivent un nombre disproportionné de premières demandes d’asile par rapport à la majorité. La médiane basse reflète que la moitié des pays ont une valeur faible pour la demande d’asile qui est en dessous de cette valeur médiane .
 
 La variable Gender Pay Gap (écart de rémunération entre les sexes) présente une distribution symétrique et homogène. La médiane est bien centrée, et la boîte à moustaches indique que les valeurs sont concentrées dans une plage relativement étroite. Aucun outlier n’est visible, ce qui suggère que les écarts salariaux entre les sexes sont globalement similaires parmi les pays analysés.
-Interprétation
 
 Les données brutes confirment les observations issues des diagrammes à moustaches. Concernant les First Time Asylum Applicants, on observe de fortes valeurs pour des pays comme l'Allemagne (0,32 million) et la France (0,14 million), qui reçoivent un grand nombre de demandes. À l'inverse, des pays comme la Slovaquie (0,0003 million) et la Hongrie (0,00003 million) présentent des valeurs bien en dessous de la moyenne, reflétant une disparité importante.
 
@@ -205,9 +204,9 @@ for (col_name in selected_columns) {
 
 
 On remarque que les salaires varient de 500 à 2000 .
-La distribution de la variable Minimum Wage (salaire minimum) montre une dispersion modérée avec quelques valeurs basses qui se démarquent, visibles sous forme de moustaches allongées. La médiane, située dans la moitié inférieure de la boîte, indique que la moitié des pays ont un salaire minimum inférieur à cette valeur médiane. Aucune valeur aberrante significative n’est visible, ce qui reflète une relative homogénéité dans la répartition des salaires minimums parmi les pays étudiés.
+La distribution de la variable Minimum Wage (salaire minimum) montre une dispersion modérée avec quelques valeurs basses qui se démarquent, visibles sous forme de moustaches allongées. La médiane, située dans la moitié inférieure de la boîte, indique que la moitié des pays ont un salaire minimum inférieur à cette valeur médiane.
 
-La variable People at Risk of Poverty or Exclusion (personnes à risque de pauvreté ou d’exclusion sociale) présente une distribution relativement homogène. La médiane, légèrement orientée vers le bas de la boîte, indique que la moitié des pays ont des valeurs proches mais légèrement inférieures à la médiane. La taille modérée de la boîte et l’absence de valeurs aberrantes suggèrent que les pays étudiés affichent des niveaux de risque relativement similaires pour cet indicateur.
+La variable People at Risk of Poverty or Exclusion (personnes à risque de pauvreté ou d’exclusion sociale) présente une distribution relativement homogène. La médiane, légèrement orientée vers le bas de la boîte . La taille modérée de la boîte et l’absence de valeurs aberrantes suggèrent que les pays étudiés affichent des niveaux de risque relativement similaires pour cet indicateur.
 ```{r}
 selected_columns <- colnames(euro_data)[7:8]  
 
@@ -258,7 +257,7 @@ for (col_name in selected_columns) {
 ```
 Unemployment Rate (taux de chômage) : La distribution de cette variable est globalement homogène, bien que deux valeurs aberrantes soient visibles au-dessus des moustaches. Ces valeurs traduisent des taux de chômage exceptionnellement élevés pour certains pays par rapport à la majorité. La médiane, légèrement au-dessus du centre de la boîte, indique que la moitié des pays ont des taux de chômage supérieurs ou égaux à la médiane, tandis que les 50 % inférieurs sont répartis sur une plage plus large, traduisant une légère asymétrie vers les valeurs supérieures
 
-Pour la variable Youth Unemployment Rate (taux de chômage des jeunes), la distribution est plus dispersée, sans valeurs aberrantes. La boîte et les moustaches reflètent une variabilité importante entre les pays, traduisant des disparités régionales marquées. La médiane, située un peu en dessous du centre, indique une distribution légèrement asymétrique.
+Pour la variable Youth Unemployment Rate (taux de chômage des jeunes), la distribution est plus dispersée, sans valeurs aberrantes. La boîte et les moustaches reflètent une variabilité importante entre les pays, traduisant des disparités régionales marquées. La médiane, située un peu en dessous du centre, indique une distribution  asymétrique.
 ```{r}
 
 selected_columns <- colnames(euro_data)[11:12]  
@@ -313,7 +312,7 @@ Greenhouse Gas Emissions (émissions de gaz à effet de serre)
 La variable présente deux valeurs aberrantes correspondant à des pays avec des émissions particulièrement élevées. La médiane, située au centre de la boîte, reflète une répartition relativement équilibrée des données. Cela suggère qu'environ la moitié des pays ont des émissions proches ou inférieures à la médiane, tandis que l'autre moitié a des émissions plus élevées.
 
 Renewable Energy (énergies renouvelables)
-La variable montre également deux valeurs aberrantes pour des pays ayant une part particulièrement élevée d'énergies renouvelables. La médiane, située vers le bas de la boîte, indique qu'une proportion importante de pays a des parts d'énergies renouvelables faibles ou proches de cette valeur, tandis que l'autre moitié des pays a des parts plus élevées.
+La variable montre également deux valeurs aberrantes pour des pays ayant une part particulièrement élevée d'énergies renouvelables. La médiane, située vers le bas de la boîte, indique que la moitié des pays a des parts d'énergies renouvelables faibles ou proches de cette valeur, tandis que l'autre moitié des pays a des parts plus élevées.
 
 ```{r}
 
@@ -469,9 +468,6 @@ Bien que cette matrice de variance-covariance fournisse des informations limité
 
 
 
-```{r}
-
-```
 
 
 ```{r}
