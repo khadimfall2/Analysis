@@ -1361,32 +1361,7 @@ En conclusion, l’ACP combinée aux représentations graphiques et à l’analy
 
 
 
-```{r}
-# Étape 1 : Créer un data frame avec les coordonnées factorielles et les classes CAH
-coord_acp <- data.frame(PC1 = res_acp$x[, 1], 
-                        PC2 = res_acp$x[, 2], 
-                        Classe_CAH = classes_cah)
 
-# Étape 2 : Sélectionner une zone restreinte (PC1 et PC2 dans l'intervalle [-1, 1])
-zone_restante <- coord_acp[coord_acp$PC1 > -1 & coord_acp$PC1 < 1 & 
-                           coord_acp$PC2 > -1 & coord_acp$PC2 < 1, ]
-
-# Étape 3 : Afficher les pays sélectionnés
-cat("Pays dans la zone restreinte :\n")
-print(zone_restante)
-
-# Étape 4 : Représenter graphiquement la zone restreinte avec les classes CAH
-plot(zone_restante$PC1, zone_restante$PC2, 
-     col = zone_restante$Classe_CAH, 
-     pch = 20, 
-     xlab = "PC1", ylab = "PC2",
-     main = "Zone restreinte avec classes CAH")
-
-# Ajouter les noms des pays sur le graphique
-text(zone_restante$PC1, zone_restante$PC2, 
-     labels = rownames(zone_restante), pos = 4, cex = 0.8)
-
-```
 
 
 ```{r}
@@ -1445,19 +1420,16 @@ text(zone_restante$PC1, zone_restante$PC2,
 
 En examinant la zone restreinte choisie (où les composantes principales PC1 et PC2 se situent dans un intervalle limité), nous observons les proximités entre certains pays. Ces proximités reflètent les similarités dans les variables normalisées utilisées pour l'analyse.
 
-Les pays identifiés dans cette zone restreinte sont : 1, 9, 19, 21, 25, et 27. Selon les classes issues des deux méthodes de classification (CAH et k-means) :
+Les pays identifiés dans cette zone restreinte sont : 1 (Autriche), 9 (Finlande), 19 (Malte), 21 (Pologne), 25 (Slovénie) et 27 (Suède). Selon les classes issues des deux méthodes de classification (CAH et k-means) :
 
 Classe CAH : Tous ces pays appartiennent à la même classe (Classe 1), indiquant une homogénéité selon cette méthode de regroupement. Cela suggère que ces pays partagent des caractéristiques communes sur l'ensemble des variables.
 
-Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (1, 2, 3, et  4 ). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
+Classe k-means : Contrairement à CAH, les pays sont répartis dans différentes classes (Classe 1, Classe 2, Classe 3 et Classe 4). Cela montre une divergence dans la manière dont k-means interprète les proximités, possiblement influencée par la minimisation de l'inertie intra-classe.
 
-Analyse des proximités
+Dans le graphique, on observe que les pays 21 (Pologne) et 27 (Suède) sont proches sur le plan factoriel (PC1 et PC2), suggérant une similarité forte entre eux. Les pays 19 (Malte), 21 (Pologne), 27 (Suède) et 25 (Slovénie) forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires. Les pays 1 (Autriche) et 9 (Finlande) sont éloignés du reste du groupe, bien qu'ils fassent partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
 
-Dans le graphique, on observe que :
+Cette analyse montre que, bien que les deux méthodes de classification (CAH et k-means) regroupent les pays de manière globalement similaire, certaines différences subsistent, notamment dans la répartition des classes par k-means, où les proximités peuvent être interprétées différemment en raison de la méthodologie utilisée.
 
-  Les pays 21 et 27 sont proches sur le plan factoriel (PC1 et PC2), suggérant une similarité forte entre eux.
-  Les pays 19, 21, 27  et 25 forment un groupe légèrement dispersé mais globalement cohérent, indiquant des caractéristiques modérément similaires.
-  Les pays 1 et 9  sont  éloignés du reste du groupe, bien qu'ils fassent  partie de la même classe selon CAH, ce qui pourrait indiquer une particularité spécifique sur certaines variables.
 
 Ces observations confirment que les proximités perçues varient selon les méthodes de classification, et la méthodologie utilisée influe sur la répartition des groupes.
 
